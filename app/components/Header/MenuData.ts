@@ -1,4 +1,4 @@
-import menuData from './menuData.json';
+import headerMenuData from './menuData.json';
 
 export type MenuItem = {
   text: string;
@@ -8,4 +8,4 @@ export type MenuItem = {
 
 export type MenuData = MenuItem[];
 
-export default menuData as MenuData;
+export default headerMenuData as MenuData;
