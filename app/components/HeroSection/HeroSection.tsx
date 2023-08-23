@@ -5,9 +5,9 @@ import openhImage from '../../../public/openh.jpg'
 
 export default function HeroSection() {
     
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value);
+    const [searchQuery, setsearchQuery] = useState<string>('');
+    const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setsearchQuery(e.target.value);
     };
     
     return (
@@ -19,11 +19,11 @@ export default function HeroSection() {
                     <input
                         type="text"
                         placeholder="Search for a movie, tv show, person......"
-                        value={searchTerm}
+                        value={searchQuery}
                         onChange={handleSearchChange}
                         className='px-5 py-3 rounded-full w-[79vw] focus-visible:outline-0'
                     />
-                    <Link href={`/search?term=${searchTerm}`} passHref className="search-button rounded-full px-6 py-3 relative bg-gradient-to-r from-teal-500 to-blue-500 -left-[95px] text-white font-bold">
+                    <Link href={`/search?query=${searchQuery}`} passHref className="search-button rounded-full px-6 py-3 relative bg-gradient-to-r from-teal-500 to-blue-500 -left-[95px] text-white font-bold">
                     Search
                     </Link>
                 </div>
