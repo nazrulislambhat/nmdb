@@ -1,0 +1,26 @@
+{
+  "THE BASICS": [
+    { "label": "About TMDB", "link": "#" },
+    { "label": "Contact Us", "link": "#" },
+    { "label": "Support Forums", "link": "#" },
+    { "label": "API", "link": "#" },
+    { "label": "System Status", "link": "#" }     
+  ],
+  "GET INVOLVED": [
+    { "label": "Contribution Bible", "link": "#" },
+    { "label": "Add New Movie", "link": "#" },
+    { "label": "Add New TV Show", "link": "#" }
+  ],
+  "COMMUNITY": [
+    { "label": "Guidelines", "link": "#" },
+    { "label": "Discussions", "link": "y#" },
+    { "label": "Leaderboard", "link": "#" },
+    { "label": "Twitter", "link": "#" }
+  ],
+  "LEGAL": [
+    { "label": "Terms of Use", "link": "#" },
+    { "label": "API Terms of Use", "link": "#" },
+    { "label": "Privacy Policy", "link": "#" },
+    { "label": "DMCA Takedown Request", "link": "#" }
+  ]
+}
