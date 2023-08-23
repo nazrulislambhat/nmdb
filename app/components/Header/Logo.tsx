@@ -8,8 +8,8 @@ export default function Logo() {
         <Image
           src={logoSrc}
           alt="TMDB Header Logo"
-          width={160}
-          height={60}
+          width={154}
+          height={20}
         />
     </Link>
   );

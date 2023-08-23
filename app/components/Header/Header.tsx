@@ -4,9 +4,11 @@ import Navigation from './Navigation';
 import menuData from './menuData.json'
 import Image from 'next/image'
 import searchIcon from '../../../public/search.svg'
+
 export default function Header() {
     return (
-            <header className='header flex flex-start justify-between flex-row items-center justify-start p-5 pr-44 pl-44 bg-backgroundColor'>
+        <div className='header--wrapper px-28 py-5 bg-backgroundColor'>
+            <header className='header flex flex-start justify-between flex-row items-center justify-start px-10 py-0'>
                 <div className='flex items-center'>
                     <div className='header--logo pr-16'>
                         <Logo />
@@ -24,5 +26,6 @@ export default function Header() {
                     />
                 </div>
             </header>
+        </div>
     )
 }

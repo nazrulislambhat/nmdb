@@ -1,11 +1,14 @@
-import Footer from './components/Footer/Footer'
-import Header from './components/Header/Header'
+
+import Index from './pages'
+import Link from 'next/link';
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <Header />
-      <Footer />
+      <Link href="/search">
+        Go to Search
+      </Link>
+      <Index />
     </main>
   )
 }
