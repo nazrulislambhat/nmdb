@@ -1,34 +1,91 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Movie Streaming App using Next.js, Tailwind CSS, and TMDB API
+
+Welcome to the Movie Streaming App repository! This app is being developed using Next.js, Tailwind CSS, and the TMDB API. It aims to provide users with a platform to explore movies and potentially offer streaming services in the future.
+
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Bugs and Issues](#bugs-and-issues)
+- [Future Scope](#future-scope)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+- Browse a vast collection of movies.
+- Search for movies using keywords.
+- View detailed information about movies.
+- Responsive layout for desktop and tablet screens.
+- **Future Scope**: Potential inclusion of streaming services.
 
 ## Getting Started
 
-First, run the development server:
+Follow these instructions to set up and run the app on your local machine.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js (version XX or higher)
+- npm (version XX or higher)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Clone the repository:
 
-## Learn More
+    ```bash
+   git clone https://github.com/nazrulislambhat/tmdb.git
 
-To learn more about Next.js, take a look at the following resources:
+2. Navigate to the project directory:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```bash
+    cd tmdb
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. Install the dependencies:
 
-## Deploy on Vercel
+    ```bash
+    npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Obtain an API key from the TMDB website by signing up for an account.
+
+2. Create a .env.local file in the project root and add your TMDB API key:
+    ```bash
+    TMDB_API_KEY=your-api-key-here
+3. Start the development server:
+    ```bash
+    npm run dev
+4. Open your browser and navigate to http://localhost:3000 to access the app.
+
+### Bugs and Issues
+
+Issue: Currently, there is no mobile layout.
+Potential Solution: Implement responsive design using Tailwind CSS classes to create a mobile-friendly layout.
+Feel free to open an issue if you encounter any other bugs or problems. Contributions to resolve these issues are welcome!
+
+### Future Scope
+
+The future scope of this project includes:
+
+- Implementing a mobile-responsive layout.
+- Adding user authentication for personalized experiences.
+- Exploring options for integrating streaming services.
+- Enhancing search and filtering functionalities.
+- Improving overall UI/UX design.
+- Contributing
+= Contributions are always welcome! If you'd like to contribute to the project, please follow these steps:
+
+### Fork the repository.
+
+- Create a new branch for your feature or bug fix: git checkout -b feature-name.
+- Make your changes and commit them with a descriptive commit message.
+- Push your changes to your fork: git push origin feature-name.
+- Create a pull request explaining your changes and why they should be merged.
+
+### License
+This project is licensed under the MIT License.
+
+Happy coding! If you have any questions, feel free to contact us at your@email.com.
