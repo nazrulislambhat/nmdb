@@ -10,6 +10,12 @@ export default function HeroSection(props) {
     setSearchQuery(e.target.value);
   };
 
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      window.location.href = `/search?query=${searchQuery}`;
+    }
+  };
   return (
     <div
       className="hero-section px-0 py-14 mx-28 custom-bg"
@@ -26,6 +32,7 @@ export default function HeroSection(props) {
             placeholder="Search for a movie, tv show, person......"
             value={searchQuery}
             onChange={handleSearchChange}
+            onKeyPress={handleSearchKeyPress}
             className="px-5 py-3 rounded-full relative w-[100%] focus-visible:outline-0"
           />
           <Link
