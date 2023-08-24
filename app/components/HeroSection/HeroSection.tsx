@@ -3,11 +3,8 @@ import { useState, ChangeEvent } from 'react';
 import Link from 'next/link';
 import openhImage from '../../../public/openh.jpg';
 
-interface HeroSectionProps {
-  title: string;
-  subtitle: string;
-}
-export default function HeroSection({ title, subtitle }: HeroSectionProps) {
+
+export default function HeroSection(props) {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -20,8 +17,10 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
       style={{ backgroundImage: `url(${openhImage.src})` }}
     >
       <div className="px-10 py-8">
-        <h1 className="text-5xl text-white font-bold pb-2">{title}</h1>
-        <p className="text-2xl text-white font-semibold pb-12">{subtitle}</p>
+        <h1 className="text-5xl text-white font-bold pb-2">{props.title}</h1>
+        <p className="text-2xl text-white font-semibold pb-12">
+          {props.subtitle}
+        </p>
         <div className="search-container w-screen flex">
           <input
             type="text"
