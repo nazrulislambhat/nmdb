@@ -3,7 +3,6 @@ import { useState, ChangeEvent } from 'react';
 import Link from 'next/link';
 import openhImage from '../../../public/openh.jpg';
 
-
 export default function HeroSection(props) {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -21,13 +20,13 @@ export default function HeroSection(props) {
         <p className="text-2xl text-white font-semibold pb-12">
           {props.subtitle}
         </p>
-        <div className="search-container w-screen flex">
+        <div className="search-container flex">
           <input
             type="text"
             placeholder="Search for a movie, tv show, person......"
             value={searchQuery}
             onChange={handleSearchChange}
-            className="px-5 py-3 rounded-full w-[79vw] focus-visible:outline-0"
+            className="px-5 py-3 rounded-full relative w-[100%] focus-visible:outline-0"
           />
           <Link
             href={`/search?query=${searchQuery}`}
