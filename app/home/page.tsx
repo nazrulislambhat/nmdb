@@ -5,9 +5,9 @@ import HeroSection from "../components/HeroSection/HeroSection";
 export default function Index() { 
     return (
         <>
-            <Header />
-            <HeroSection/>
-            <Footer />
+        <Header />
+        <HeroSection/>
+        <Footer />
         </>
     )
 

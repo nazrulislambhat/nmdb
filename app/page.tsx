@@ -1,6 +1,6 @@
 
-import Index from './pages'
 import Link from 'next/link';
+import HomePage from './home/page'
 
 export default function Home() {
   return (
@@ -8,7 +8,7 @@ export default function Home() {
       <Link href="/search">
         Go to Search
       </Link>
-      <Index />
+      <HomePage />
     </main>
   )
 }
