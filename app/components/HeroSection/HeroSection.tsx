@@ -3,10 +3,15 @@ import { useState, ChangeEvent } from 'react';
 import Link from 'next/link';
 import openhImage from '../../../public/openh.jpg';
 
-export default function HeroSection() {
-  const [searchQuery, setsearchQuery] = useState<string>('');
+interface HeroSectionProps {
+  title: string;
+  subtitle: string;
+}
+export default function HeroSection({ title, subtitle }: HeroSectionProps) {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setsearchQuery(e.target.value);
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -15,10 +20,8 @@ export default function HeroSection() {
       style={{ backgroundImage: `url(${openhImage.src})` }}
     >
       <div className="px-10 py-8">
-        <h1 className="text-5xl text-white font-bold pb-2">Welcome</h1>
-        <p className="text-2xl text-white font-semibold pb-12">
-          Millions of movies, TV shows and people to discover. Explore now.
-        </p>
+        <h1 className="text-5xl text-white font-bold pb-2">{title}</h1>
+        <p className="text-2xl text-white font-semibold pb-12">{subtitle}</p>
         <div className="search-container w-screen flex">
           <input
             type="text"

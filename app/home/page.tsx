@@ -6,7 +6,10 @@ export default function Index() {
   return (
     <>
       <Header />
-      <HeroSection />
+      <HeroSection
+        title="Welcome"
+        subtitle="Millions of movies, TV shows and people to discover. Explore now."
+      />
       <Footer />
     </>
   );
