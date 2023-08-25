@@ -11,7 +11,9 @@ export default function FooterNav() {
           <ul className="font-normal text-sm leading-6">
             {items.map(({ label, link }) => (
               <li key={label}>
-                <Link href={link} className='hover:underline'>{label}</Link>
+                <Link href={link} className="hover:underline">
+                  {label}
+                </Link>
               </li>
             ))}
           </ul>
