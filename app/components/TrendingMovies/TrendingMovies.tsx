@@ -52,7 +52,6 @@ export default function TrendingMovies() {
     const swiper = new Swiper('.swiper-container', {
       slidesPerView: 8,
       spaceBetween: 8,
-      
     });
   }, [movies]);
 
@@ -80,7 +79,7 @@ export default function TrendingMovies() {
         className="relative bg-contain bg-no-repeat bg-center"
         style={{ backgroundImage: `url(${trendingBg.src})` }}
       >
-        <div className="swiper-container px-8 pb-8">
+        <div className="swiper-container px-8 pb-8 overflow-x-auto">
           <div className="swiper-wrapper">
             {movies.map((movie, index) => (
               <div key={index} className="swiper-slide">
