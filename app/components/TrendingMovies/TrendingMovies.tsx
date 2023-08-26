@@ -56,7 +56,7 @@ export default function TrendingMovies() {
   }, [movies]);
 
   return (
-    <div className="mx-28 overflow-x-auto">
+    <div className="overflow-x-auto">
       <div className="flex justify-start items-center my-4 px-8">
         <h2 className="pr-4 py-2 font-semibold text-2xl">Trending</h2>
         <div className="filter border-[1px] rounded-3xl h-full border-blue-950">

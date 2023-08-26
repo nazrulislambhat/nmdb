@@ -12,7 +12,7 @@ function renderMenuItem(item: MenuItem) {
       <Link
         href={item.link}
         passHref
-        className="block text-white font-semibold text-sm pr-5"
+        className="block text-white font-semibold text-base pr-5"
       >
         {item.text}
       </Link>
@@ -23,7 +23,7 @@ function renderMenuItem(item: MenuItem) {
               <Link
                 href={child.link}
                 passHref
-                className="block py-2 px-6 hover:bg-gray-100 font-normal text-sm rounded-md whitespace-nowrap"
+                className="block py-2 px-6 hover:bg-gray-100 font-normal text-base rounded-md whitespace-nowrap"
               >
                 {child.text}
               </Link>

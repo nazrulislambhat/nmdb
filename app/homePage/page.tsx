@@ -4,14 +4,16 @@ import HeroSection from '../components/HeroSection/HeroSection';
 import TrendingMovies from '../components/TrendingMovies/TrendingMovies';
 export default function Index() {
   return (
-    <>
+    <div>
       <Header />
-      <HeroSection
-        title="Welcome"
-        subtitle="Millions of movies, TV shows and people to discover. Explore now."
-      />
-      <TrendingMovies />
+      <div className=" max-w-[1300px] mx-auto">
+        <HeroSection
+          title="Welcome"
+          subtitle="Millions of movies, TV shows and people to discover. Explore now."
+        />
+        <TrendingMovies />
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
