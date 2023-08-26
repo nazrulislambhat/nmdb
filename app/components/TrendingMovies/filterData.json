@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Today",
+    "value": "day"
+  },
+  {
+    "name": "This Week",
+    "value": "week"
+  }
+]

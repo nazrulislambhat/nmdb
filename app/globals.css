@@ -4,9 +4,21 @@
 
 body {
   overflow-x: hidden;
+  margin: 0px auto;
 }
-.custom-bg {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dfdfdf;
+  border-radius: 10px;
+  max-width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #dfdfdf;
 }
