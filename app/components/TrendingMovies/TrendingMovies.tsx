@@ -59,11 +59,11 @@ export default function TrendingMovies() {
     <div className="overflow-x-auto">
       <div className="flex justify-start items-center my-4 px-10">
         <h2 className="pr-4 py-2 font-semibold text-2xl">Trending</h2>
-        <div className="filter border-[1px] rounded-3xl h-full border-blue-950">
+        <div className="filter border-[1px] py-1 rounded-3xl h-full border-blue-950">
           {filters.map((filter: Filter) => (
             <span
               key={filter.value}
-              className={`font-semibold text-base px-4 py-[6px] rounded-3xl cursor-pointer ${
+              className={`font-semibold text-base px-4 py-[5px] rounded-3xl cursor-pointer ${
                 timePeriod === filter.value
                   ? 'bg-backgroundColor text-teal-500'
                   : 'text-blue-950'
