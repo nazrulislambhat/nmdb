@@ -1,7 +1,7 @@
 [
   {
     "text": "Movies",
-    "link": "/",
+    "link": "nolink",
     "children": [
       {
         "text": "Popular",
@@ -27,7 +27,7 @@
   },
   {
     "text": "Tv Shows",
-    "link": "/",
+    "link": "nolink",
     "children": [
       {
         "text": "Popular",
@@ -58,7 +58,7 @@
   },
   {
     "text": "More",
-    "link": "/",
+    "link": "nolink",
     "children": null
   }
 ]

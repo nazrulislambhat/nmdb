@@ -23,7 +23,7 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
   };
   return (
     <div
-      className="hero-section px-0 py-14 g-cover bg-center bg-no-repeat"
+      className="hero-section px-0 py-14 mx-28 custom-bg"
       style={{ backgroundImage: `url(${openhImage.src})` }}
     >
       <div className="px-10 py-8">

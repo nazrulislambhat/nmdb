@@ -1,9 +1,9 @@
-import Home from './homePage/page';
+import HomePage from './home/page';
 
-export default function HomePage() {
+export default function Home() {
   return (
     <main className="min-h-screen">
-      <Home />
+      <HomePage />
     </main>
   );
 }
