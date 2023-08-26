@@ -57,7 +57,7 @@ export default function TrendingMovies() {
 
   return (
     <div className="overflow-x-auto">
-      <div className="flex justify-start items-center my-4 px-8">
+      <div className="flex justify-start items-center my-4 px-10">
         <h2 className="pr-4 py-2 font-semibold text-2xl">Trending</h2>
         <div className="filter border-[1px] rounded-3xl h-full border-blue-950">
           {filters.map((filter: Filter) => (
@@ -79,7 +79,7 @@ export default function TrendingMovies() {
         className="relative bg-contain bg-no-repeat bg-center"
         style={{ backgroundImage: `url(${trendingBg.src})` }}
       >
-        <div className="swiper-container px-8 pb-8 overflow-x-auto">
+        <div className="swiper-container px-10 pb-10 pt-5 overflow-x-auto h-[400px]">
           <div className="swiper-wrapper">
             {movies.map((movie, index) => (
               <div key={index} className="swiper-slide">
