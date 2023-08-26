@@ -7,10 +7,23 @@ import 'swiper/swiper-bundle.css';
 import trendingBg from '../../../public/Symbols.png';
 import Link from 'next/link';
 
+interface Movie {
+  title: string;
+  releaseDate: string;
+  posterPath: string;
+  voteAverage: number;
+  id: number;
+}
+
+interface Filter {
+  name: string;
+  value: string;
+}
+
 export default function TrendingMovies() {
-  const [movies, setMovies] = useState([]);
-  const [timePeriod, setTimePeriod] = useState('day');
-  const handleTimePeriodChange = (value) => {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [timePeriod, setTimePeriod] = useState<string>('day');
+  const handleTimePeriodChange = (value: string) => {
     setTimePeriod(value);
   };
   const filters = require('./filterData.json');
@@ -19,7 +32,7 @@ export default function TrendingMovies() {
     async function fetchMovieData() {
       try {
         const data = await fetchData(`trending/all/${timePeriod}`);
-        const moviesData = data.results.map((movie) => ({
+        const moviesData: Movie[] = data.results.map((movie: any) => ({
           title: movie.title || movie.name,
           releaseDate: movie.release_date || movie.first_air_date,
           posterPath: movie.poster_path,
@@ -39,6 +52,7 @@ export default function TrendingMovies() {
     const swiper = new Swiper('.swiper-container', {
       slidesPerView: 8,
       spaceBetween: 8,
+      
     });
   }, [movies]);
 
@@ -47,7 +61,7 @@ export default function TrendingMovies() {
       <div className="flex justify-start items-center my-4 px-8">
         <h2 className="pr-4 py-2 font-semibold text-2xl">Trending</h2>
         <div className="filter border-[1px] rounded-3xl h-full border-blue-950">
-          {filters.map((filter) => (
+          {filters.map((filter: Filter) => (
             <span
               key={filter.value}
               className={`font-semibold text-base px-4 py-[6px] rounded-3xl cursor-pointer ${
