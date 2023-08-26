@@ -97,9 +97,38 @@ export default function TrendingMovies() {
                     />
                   </Link>
                 )}
-                <span className="w-8 h-8 flex items-center text-xs justify-center bg-backgroundColor text-white font-bold rounded-full relative -top-4 left-2">
-                  {Math.round(movie.voteAverage * 10)}
-                  <sup className="text-[8px]">%</sup>
+                <span className="w-10 h-10 bg-backgroundColor text-white flex items-center justify-center text-xs font-bold rounded-full relative -top-4 left-2">
+                  <svg
+                    className="circular-outline absolute inset-[2px]"
+                    viewBox="0 0 36 36"
+                    style={{
+                      transform: 'rotate(-90deg)',
+                      strokeDasharray: 100,
+                      strokeDashoffset:
+                        100 - Math.round(movie.voteAverage * 10),
+                    }}
+                  >
+                    <circle
+                      className="circle "
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="transparent"
+                      strokeWidth="2"
+                      stroke={
+                        Math.round(movie.voteAverage * 10) > 80
+                          ? '#B9F18C'
+                          : Math.round(movie.voteAverage * 10) > 50
+                          ? '#E9EB87'
+                          : '#DB5A42'
+                      }
+                    />
+                  </svg>
+
+                  <span>
+                    {Math.round(movie.voteAverage * 10)}
+                    <sup className="text-[8px]">%</sup>
+                  </span>
                 </span>
 
                 <Link
