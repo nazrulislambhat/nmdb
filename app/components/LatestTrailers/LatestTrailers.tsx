@@ -150,7 +150,7 @@ export default function TopMovies() {
               key={filter.value}
               className={`text-white px-4 text-sm py-[3px] cursor-pointer ${
                 activeFilter === filter.value
-                  ? 'px-4 rounded-3xl text-backgroundColor  font-semibold cursor-pointer bg-green-300'
+                  ? 'px-4 rounded-3xl text-black  font-semibold cursor-pointer bg-green-300'
                   : ''
               }`}
               onClick={() => setActiveFilter(filter.value)}
