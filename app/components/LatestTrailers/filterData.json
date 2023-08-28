@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Streaming",
+    "value": "streaming"
+  },
+  {
+    "name": "On TV",
+    "value": "on-tv"
+  },
+  {
+    "name": "For Rent",
+    "value": "for-rent"
+  },
+  {
+    "name": "In Theaters",
+    "value": "in-theaters"
+  }
+]
+
