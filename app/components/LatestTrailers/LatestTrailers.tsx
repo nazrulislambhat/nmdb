@@ -39,7 +39,7 @@ export default function TopMovies() {
     try {
       const currentDate = new Date();
       const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 1);
+      lastMonth.setMonth(currentDate.getMonth() - 3);
 
       const movieData = await fetchData('/discover/movie');
       const filteredMovies = movieData.results
@@ -126,7 +126,7 @@ export default function TopMovies() {
 
   return (
     <div
-      className="top-movies pt-[20px] h-full px-[40px] bg-cover bg-center bg-no-repeat"
+      className="top-movies pt-[20px] h-full px-[40px] bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage: (
           activeFilter === 'streaming' ? movies.length > 0 : tvShows.length > 0
@@ -139,46 +139,51 @@ export default function TopMovies() {
           : 'none',
       }}
     >
-      <h2 className="pr-4 py-2 font-semibold text-white text-2xl">
-        Latest Trailers
-      </h2>
-      <div className="filter-tabs mb-4 border-[1px] border-green-300 w-fit rounded-3xl">
-        {filters.map((filter: Filter) => (
-          <span
-            key={filter.value}
-            className={`text-white px-4 text-sm py-[3px] cursor-pointer ${
-              activeFilter === filter.value
-                ? 'px-4 rounded-3xl text-[#032541] font-semibold cursor-pointer bg-green-300'
-                : ''
-            }`}
-            onClick={() => setActiveFilter(filter.value)}
-          >
-            {filter.name}
-          </span>
-        ))}
-      </div>
-      <div className="movie-list flex gap-4 justify-between py-[20px] overflow-x-auto">
-        {(activeFilter === 'streaming' ? movies : tvShows).map(
-          (item: Movie | TVShow) => (
-            <div key={item.id} className="movie-item mb-4">
-              <div
-                onClick={() => handleVideoClick(item.key)}
-                className="yt-trailer mb-4 rounded-lg overflow-hidden"
-              >
-                <YouTube
-                  videoId={item.key}
-                  opts={{ width: '300', height: '168' }}
-                />
+      <div className="absolute inset-0 bg-backgroundColor opacity-80 pointer-events-none" />
+      <div className="relative z-10">
+        <h2 className="pr-4 py-2 font-semibold text-white text-2xl">
+          Latest Trailers
+        </h2>
+        <div className="filter-tabs mb-4 border-[1px] border-green-300 w-fit rounded-3xl">
+          {filters.map((filter: Filter) => (
+            <span
+              key={filter.value}
+              className={`text-white px-4 text-sm py-[3px] cursor-pointer ${
+                activeFilter === filter.value
+                  ? 'px-4 rounded-3xl text-backgroundColor  font-semibold cursor-pointer bg-green-300'
+                  : ''
+              }`}
+              onClick={() => setActiveFilter(filter.value)}
+            >
+              {filter.name}
+            </span>
+          ))}
+        </div>
+        <div className="movie-list flex gap-4 justify-between py-[20px] overflow-x-auto">
+          {(activeFilter === 'streaming' ? movies : tvShows).map(
+            (item: Movie | TVShow) => (
+              <div key={item.id} className="movie-item mb-4">
+                <div
+                  onClick={() => handleVideoClick(item.key)}
+                  className="yt-trailer mb-4 rounded-lg overflow-hidden"
+                >
+                  <YouTube
+                    videoId={item.key}
+                    opts={{ width: '300', height: '168' }}
+                  />
+                </div>
+                <h3 className="text-lg text-white text-center">
+                  {item.title || item.name}
+                </h3>
+                {item.name && (
+                  <h4 className="text-sm text-white text-center">
+                    {item.name}
+                  </h4>
+                )}
               </div>
-              <h3 className="text-lg text-white text-center">
-                {item.title || item.name}
-              </h3>
-              {item.name && (
-                <h4 className="text-sm text-white text-center">{item.name}</h4>
-              )}
-            </div>
-          )
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
   );
