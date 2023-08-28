@@ -81,7 +81,7 @@ export default function TopMovies() {
     try {
       const currentDate = new Date();
       const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 1);
+      lastMonth.setMonth(currentDate.getMonth() - 3);
 
       const tvData = await fetchData('/discover/tv');
       const filteredTVShows = tvData.results.map(async (tvShow: any) => {
