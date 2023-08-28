@@ -20,13 +20,13 @@ interface Filter {
 export default function TopMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>('streaming'); // Set the initial active filter
+  const [activeFilter, setActiveFilter] = useState<string>('streaming'); 
 
-  const filters = require('./filterData.json'); // Import the filter data
+  const filters = require('./filterData.json'); 
 
   useEffect(() => {
     fetchTopMovies();
-  }, [activeFilter]); // Fetch movies when the active filter changes
+  }, [activeFilter]);
 
   const fetchTopMovies = async () => {
     try {
@@ -34,8 +34,6 @@ export default function TopMovies() {
       console.log('Fetched data:', data);
 
       const movieIds = data.results.map((movie: any) => movie.id);
-
-      // Rest of your data fetching logic
 
       setMovies(trailerMovies.slice(0, 20));
     } catch (error) {
