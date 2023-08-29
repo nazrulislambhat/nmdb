@@ -23,8 +23,10 @@ export default function TrendingMedia() {
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const movieData = await fetchData('discover/movie');
-        const tvData = await fetchData('discover/tv');
+        const [movieData, tvData] = await Promise.all([
+          fetchData('discover/movie'),
+          fetchData('discover/tv'),
+        ]);
 
         const combinedData: Movie[] = [
           ...movieData.results.map((movie: any) => ({
