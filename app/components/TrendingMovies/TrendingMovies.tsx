@@ -89,23 +89,17 @@ export default function TrendingMovies() {
                   href={item.isMovie ? `/movie/${item.id}` : `/tv/${item.id}`}
                   className="cursor-pointer hover:underline h-[225px]"
                 >
-                  {item.posterPath ? (
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w500${item.posterPath}`}
-                      alt={item.title}
-                      width={150}
-                      height={225}
-                      className="rounded-lg cursor-pointer h-[225px]"
-                    />
-                  ) : (
-                    <Image
-                      src={noImage}
-                      alt="No Image"
-                      width={150}
-                      height={225}
-                      className="rounded-lg cursor-pointer h-[225px]"
-                    />
-                  )}
+                  <Image
+                    src={
+                      item.posterPath
+                        ? `https://image.tmdb.org/t/p/w500${item.posterPath}`
+                        : noImage
+                    }
+                    alt={item.title}
+                    width={150}
+                    height={225}
+                    className="rounded-lg cursor-pointer h-[225px]"
+                  />
                 </Link>
                 <span className="w-10 h-10 bg-backgroundColor text-white flex items-center justify-center text-xs font-bold rounded-full relative -top-4 left-2">
                   <svg

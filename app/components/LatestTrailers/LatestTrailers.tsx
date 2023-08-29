@@ -39,7 +39,7 @@ export default function TopMovies() {
     try {
       const currentDate = new Date();
       const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 3);
+      lastMonth.setMonth(currentDate.getMonth() - 4);
 
       const movieData = await fetchData('/discover/movie');
       const filteredMovies = movieData.results
