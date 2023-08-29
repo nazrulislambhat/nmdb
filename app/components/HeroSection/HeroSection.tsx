@@ -41,7 +41,7 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
           <Link
             href={`/search?query=${searchQuery}`}
             passHref
-            className="search-button rounded-full px-6 py-3 relative bg-gradient-to-r from-teal-500 to-blue-500 -left-[95px] text-white font-bold"
+            className="search-button rounded-full px-6 py-3 absolute z-20 right-10 bg-gradient-to-r from-teal-500 to-blue-500  text-white font-bold sm:relative sm:-left[95px]"
           >
             Search
           </Link>
