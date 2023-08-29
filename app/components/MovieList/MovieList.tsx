@@ -15,10 +15,6 @@ interface Movie {
 
 export default function TrendingMedia() {
   const [media, setMedia] = useState<Movie[]>([]);
-  const [timePeriod, setTimePeriod] = useState<string>('day');
-  const handleTimePeriodChange = (value: string) => {
-    setTimePeriod(value);
-  };
 
   useEffect(() => {
     async function fetchMediaData() {
@@ -54,7 +50,7 @@ export default function TrendingMedia() {
     }
 
     fetchMediaData();
-  }, [timePeriod]);
+  });
 
   return (
     <div className="overflow-hidden">
