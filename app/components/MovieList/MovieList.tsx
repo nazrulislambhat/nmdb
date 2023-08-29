@@ -4,8 +4,7 @@ import { fetchData } from '../../utils/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import noImage from '../../../public/no-image.png';
-import trendingBg from '../../../public/Symbols.png';
-interface MediaItem {
+interface Movie {
   title: string;
   releaseDate: string;
   posterPath: string;
@@ -14,37 +13,41 @@ interface MediaItem {
   isMovie: boolean;
 }
 
-interface Filter {
-  name: string;
-  value: string;
-}
-
-export default function TrendingMovies() {
-  const [media, setMedia] = useState<MediaItem[]>([]);
+export default function TrendingMedia() {
+  const [media, setMedia] = useState<Movie[]>([]);
   const [timePeriod, setTimePeriod] = useState<string>('day');
-
   const handleTimePeriodChange = (value: string) => {
     setTimePeriod(value);
   };
 
-  const filters: Filter[] = [
-    { name: 'Today', value: 'day' },
-    { name: 'This Week', value: 'week' },
-  ];
-
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const data = await fetchData(`trending/all/${timePeriod}`);
-        const mediaData: MediaItem[] = data.results.map((item: any) => ({
-          title: item.title || item.name,
-          releaseDate: item.release_date || item.first_air_date,
-          posterPath: item.poster_path,
-          voteAverage: item.vote_average,
-          id: item.id,
-          isMovie: item.media_type === 'movie',
-        }));
-        setMedia(mediaData);
+        const [movieData, tvData] = await Promise.all([
+          fetchData('discover/movie'),
+          fetchData('discover/tv'),
+        ]);
+
+        const combinedData: Movie[] = [
+          ...movieData.results.map((movie: any) => ({
+            title: movie.title,
+            releaseDate: movie.release_date,
+            posterPath: movie.poster_path,
+            voteAverage: movie.vote_average,
+            id: movie.id,
+            isMovie: true,
+          })),
+          ...tvData.results.map((tvShow: any) => ({
+            title: tvShow.name,
+            releaseDate: tvShow.first_air_date,
+            posterPath: tvShow.poster_path,
+            voteAverage: tvShow.vote_average,
+            id: tvShow.id,
+            isMovie: false,
+          })),
+        ];
+
+        setMedia(combinedData);
       } catch (error) {
         console.error(error);
       }
@@ -55,30 +58,12 @@ export default function TrendingMovies() {
 
   return (
     <div className="overflow-hidden">
-      <div className="flex justify-start items-center my-4 px-10">
-        <h2 className="pr-4 py-2 font-semibold text-2xl">Trending</h2>
-        <div className="filter border-[1px] rounded-3xl h-full border-blue-950">
-          {filters.map((filter: Filter) => (
-            <span
-              key={filter.value}
-              className={`font-semibold text-base px-4 py-[1px] rounded-3xl cursor-pointer ${
-                timePeriod === filter.value
-                  ? 'bg-backgroundColor text-teal-500'
-                  : 'text-blue-950'
-              }`}
-              onClick={() => handleTimePeriodChange(filter.value)}
-            >
-              {filter.name}
-            </span>
-          ))}
-        </div>
+      <div className="flex justify-start items-center pb-[20px] px-10">
+        <h2 className="font-bold text-2xl">What`s Popular</h2>
       </div>
-      <div
-        className="relative  bg-contain bg-no-repeat bg-bottom"
-        style={{ backgroundImage: `url(${trendingBg.src})` }}
-      >
+      <div className="relative">
         <div className="px-10">
-          <div className="flex sm:flex-row gap-4 overflow-x-auto">
+          <div className="flex gap-4 overflow-x-auto">
             {media.map((item, index) => (
               <div
                 key={index}

@@ -126,7 +126,7 @@ export default function TopMovies() {
 
   return (
     <div
-      className="top-movies pt-[20px] h-full px-[40px] bg-cover bg-center bg-no-repeat relative"
+      className="top-movies pt-[20px] mb-[30px] h-full px-[40px] bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage: (
           activeFilter === 'streaming' ? movies.length > 0 : tvShows.length > 0

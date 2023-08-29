@@ -7,7 +7,7 @@ import searchIcon from '../../../public/search.svg';
 
 export default function Header() {
   return (
-    <div className="header--wrapper px-28 py-5 bg-backgroundColor">
+    <div className="header--wrapper px-4 py-2 sm:px-28 sm:py-4 bg-backgroundColor">
       <header className="header flex flex-start  max-w-[1300px] mx-auto flex-row items-center justify-start px-10 py-0">
         <div className="flex items-center">
           <div className="header--logo pr-16">
