@@ -81,7 +81,7 @@ export default function TopMovies() {
     try {
       const currentDate = new Date();
       const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 1);
+      lastMonth.setMonth(currentDate.getMonth() - 3);
 
       const tvData = await fetchData('/discover/tv');
       const filteredTVShows = tvData.results.map(async (tvShow: any) => {
@@ -150,7 +150,7 @@ export default function TopMovies() {
               key={filter.value}
               className={`text-white px-4 text-sm py-[3px] cursor-pointer ${
                 activeFilter === filter.value
-                  ? 'px-4 rounded-3xl text-backgroundColor  font-semibold cursor-pointer bg-green-300'
+                  ? 'px-4 rounded-3xl text-black  font-semibold cursor-pointer bg-green-300'
                   : ''
               }`}
               onClick={() => setActiveFilter(filter.value)}
