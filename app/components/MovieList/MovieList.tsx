@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { fetchData } from '../../utils/api.js';
+import { fetchData } from '../../utils/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import noImage from '../../../public/no-image.png';
