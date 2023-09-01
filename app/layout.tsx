@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
-
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 import { Source_Sans_3 } from 'next/font/google';
 const source = Source_Sans_3({ subsets: ['latin'] });
 
@@ -16,7 +17,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={source.className}>{children}</body>
+      <body className={source.className}>
+        <header>
+          <Header />
+        </header>
+
+        {children}
+
+        <footer>
+          <Footer />
+        </footer>
+      </body>
     </html>
   );
 }
