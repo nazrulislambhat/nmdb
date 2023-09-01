@@ -2,7 +2,7 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import clearIcon from '../../../public/clear.svg';
 import Image from 'next/image';
-import { fetchData } from '../../utils/api'; // Import your fetchData function
+import { fetchData } from '../../utils/api';
 import searchIcon from '../../../public/search-black.svg';
 import trendingIcon from '../../../public/trending.svg';
 import loadingIcon from '../../../public/loading.gif';
