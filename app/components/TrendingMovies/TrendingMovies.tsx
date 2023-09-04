@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import noImage from '../../../public/no-image.png';
 import trendingBg from '../../../public/Symbols.png';
+
 interface MediaItem {
   title: string;
   releaseDate: string;
@@ -35,6 +36,19 @@ export default function TrendingMovies() {
   useEffect(() => {
     async function fetchMediaData() {
       try {
+        const cachedData = localStorage.getItem(
+          `cachedMediaData-${timePeriod}`
+        );
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const currentTime = new Date().getTime();
+          const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
+
+          if (!isDataStale) {
+            setMedia(data);
+            return;
+          }
+        }
         const data = await fetchData(`trending/all/${timePeriod}`);
         const mediaData: MediaItem[] = data.results.map((item: any) => ({
           title: item.title || item.name,
@@ -45,6 +59,10 @@ export default function TrendingMovies() {
           isMovie: item.media_type === 'movie',
         }));
         setMedia(mediaData);
+        localStorage.setItem(
+          `cachedMediaData-${timePeriod}`,
+          JSON.stringify({ data: mediaData, timestamp: new Date().getTime() })
+        );
       } catch (error) {
         console.error(error);
       }
