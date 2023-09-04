@@ -13,7 +13,7 @@ interface Movie {
   isMovie: boolean;
 }
 
-export default function TrendingMedia() {
+export default function WhatsPopular() {
   const [media, setMedia] = useState<Movie[]>([]);
   const [timePeriod, setTimePeriod] = useState<string>('day');
   const handleTimePeriodChange = (value: string) => {

@@ -77,9 +77,9 @@ export default function Search() {
   }, [searchQuery]);
 
   return (
-    <div className="search-wrapper z-40 flex justify-center w-full flex-col absolute top-[57px] left-0">
-      <div className="search-container w-screen max-w-7xl border-b-2 mx-auto bg-white border-gray-300 px-4 py-1">
-        <div className="flex justify-center items-center">
+    <div className="search-wrapper bg-white  z-40 flex justify-center w-full flex-col absolute top-[57px] left-0">
+      <div className="search-container w-screen max-w-screen border-b-2 px-[26%] bg-white border-gray-300 py-1">
+        <div className="flex justify-center items-center ">
           <Image src={searchIcon} alt="Search Icon" width={20} height={20} />
           <input
             type="text"
@@ -132,6 +132,7 @@ export default function Search() {
                         height={15}
                         className="mr-1"
                       />
+
                       <span className="">{item.title || item.name}</span>
                     </li>
                   ))
