@@ -92,7 +92,7 @@ export default function TrendingMovies() {
         </div>
       </div>
       <div
-        className="relative  bg-contain bg-no-repeat bg-bottom"
+        className="relative  bg-contain bg-no-repeat bg-center"
         style={{ backgroundImage: `url(${trendingBg.src})` }}
       >
         <div className="px-10">
