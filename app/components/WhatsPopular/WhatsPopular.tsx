@@ -20,7 +20,6 @@ export default function WhatsPopular() {
     async function fetchMediaData() {
       try {
         const cachedData = localStorage.getItem('cachedMediaData');
-        console.log(cachedData);
         if (cachedData) {
           const { data, timestamp } = JSON.parse(cachedData);
           const currentTime = new Date().getTime();
