@@ -15,14 +15,22 @@ interface Movie {
 
 export default function WhatsPopular() {
   const [media, setMedia] = useState<Movie[]>([]);
-  const [timePeriod, setTimePeriod] = useState<string>('day');
-  const handleTimePeriodChange = (value: string) => {
-    setTimePeriod(value);
-  };
 
   useEffect(() => {
     async function fetchMediaData() {
       try {
+        const cachedData = localStorage.getItem('cachedMediaData');
+        console.log(cachedData);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const currentTime = new Date().getTime();
+          const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
+
+          if (!isDataStale) {
+            setMedia(data);
+            return;
+          }
+        }
         const [movieData, tvData] = await Promise.all([
           fetchData('discover/movie'),
           fetchData('discover/tv'),
@@ -47,6 +55,14 @@ export default function WhatsPopular() {
           })),
         ];
 
+        localStorage.setItem(
+          'cachedMediaData',
+          JSON.stringify({
+            data: combinedData,
+            timestamp: new Date().getTime(),
+          })
+        );
+
         setMedia(combinedData);
       } catch (error) {
         console.error(error);
@@ -54,7 +70,7 @@ export default function WhatsPopular() {
     }
 
     fetchMediaData();
-  }, [timePeriod]);
+  }, []);
 
   return (
     <div className="overflow-hidden">
