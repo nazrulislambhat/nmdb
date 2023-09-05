@@ -9,6 +9,7 @@ import { fetchData } from '../../utils/api';
 import searchIcon from '../../../public/search-black.svg';
 import trendingIcon from '../../../public/trending.svg';
 import loadingIcon from '../../../public/loading.gif';
+import { useRouter } from 'next/navigation'; // Import the useRouter hook
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -61,7 +62,7 @@ export default function Search() {
     const fetchSearchResults = async () => {
       try {
         setIsLoading(true);
-        const query = encodeURIComponent(searchQuery); // Encode the search query
+        const query = encodeURIComponent(searchQuery); 
         const options = {
           method: 'GET',
           headers: {
@@ -98,6 +99,17 @@ export default function Search() {
     const timeoutId = setTimeout(fetchSearchResults, 500);
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  const generateRedirectionURL = (item: any) => {
+    const baseRedirectURL = `/search/${item.media_type}`;
+    return `${baseRedirectURL}?query=${encodeURIComponent(searchQuery)}`;
+  };
+
+  const router = useRouter();
+  const handleResultItemClick = (item: any) => {
+    const redirectionURL = generateRedirectionURL(item);
+    router.push(redirectionURL);
+  };
 
   return (
     <div className="search-wrapper bg-white  z-40 flex justify-center w-full flex-col absolute top-[57px] left-0">
@@ -147,6 +159,7 @@ export default function Search() {
                     <li
                       key={item.id}
                       className="border-b-[1px] flex items-center last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleResultItemClick(item)}
                     >
                       {item.media_type === 'movie' ? (
                         <Image
@@ -191,6 +204,7 @@ export default function Search() {
                     <li
                       key={item.id}
                       className="border-b-[1px] flex items-center last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleResultItemClick(item)}
                     >
                       <Image
                         src={searchIcon}
