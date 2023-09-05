@@ -71,15 +71,25 @@ export default function Search() {
           media_type: item.media_type,
         }));
 
-        const latest10Results = latestResults.slice(0, 10);
+        const exactMatch = latestResults.find(
+          (result: any) =>
+            result.title.toLowerCase() === searchQuery.toLowerCase()
+        );
+
+        const remainingResults = latestResults.filter(
+          (result: any) =>
+            result.title.toLowerCase() !== searchQuery.toLowerCase()
+        );
+
+        const searchResultsToShow = exactMatch
+          ? [exactMatch, ...remainingResults]
+          : remainingResults;
+
+        const latest10Results = searchResultsToShow.slice(0, 10);
         setSearchResults(latest10Results);
 
         setIsLoading(false);
         setHasSearched(true);
-
-        latestResults.forEach((result: any) => {
-          console.log(result.title);
-        });
       } catch (error) {
         console.error('Error fetching search results:', error);
         setIsLoading(false);
@@ -133,15 +143,15 @@ export default function Search() {
           )}
         </div>
         <div className="search-results">
-          <h2 className="text-2xl flex font-bold bg-gray-100 p-2">
+          <h2 className="text-2xl flex items-center font-bold bg-gray-100 p-2">
             <Image
               src={trendingIcon}
               alt="Trending Icon"
-              width={15}
-              height={15}
+              width={20}
+              height={20}
               className="mr-1"
             />
-            {hasSearched ? 'Search Results' : 'Latest Trending'}
+            {hasSearched ? 'Search Results' : 'Trending'}
           </h2>
           {!isLoading && (
             <ul>
