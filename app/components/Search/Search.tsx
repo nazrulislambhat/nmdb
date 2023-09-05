@@ -5,11 +5,11 @@ import movieIcon from '../../../public/movie.png';
 import personIcon from '../../../public/user.png';
 import televisionIcon from '../../../public/television.png';
 import Image from 'next/image';
-import { fetchData } from '../../utils/api';
 import searchIcon from '../../../public/search-black.svg';
 import trendingIcon from '../../../public/trending.svg';
 import loadingIcon from '../../../public/loading.gif';
-import { useRouter } from 'next/navigation'; // Import the useRouter hook
+import { useRouter } from 'next/navigation';
+import { fetchData } from '../../utils/api';
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -62,26 +62,18 @@ export default function Search() {
     const fetchSearchResults = async () => {
       try {
         setIsLoading(true);
-        const query = encodeURIComponent(searchQuery); 
-        const options = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer 1867f6d6d149421642a02ed42eafb2b0',
-          },
-        };
+        const query = encodeURIComponent(searchQuery);
 
-        const searchEndpoint = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`;
+        const searchData = await fetchData('search/multi', query, 1, false);
 
-        const response = await fetch(searchEndpoint, options);
-        const searchData = await response.json();
-
+        console.log(searchData);
         const latestResults = searchData.results.map((item: any) => ({
           title: item.title || item.name,
           media_type: item.media_type,
         }));
 
-        setSearchResults(latestResults);
+        const latest10Results = latestResults.slice(0, 10);
+        setSearchResults(latest10Results);
 
         setIsLoading(false);
         setHasSearched(true);
@@ -195,16 +187,27 @@ export default function Search() {
                         />
                       )}
 
-                      <span className="font-base">
-                        {item.title || item.name}
-                      </span>
+                      <div className="flex items-center">
+                        <span className="font-bold pr-1">
+                          {item.title || item.name}
+                        </span>{' '}
+                        in
+                        <span className="font-base pl-1">
+                          {item.media_type === 'movie'
+                            ? 'Movies'
+                            : item.media_type === 'tv'
+                            ? 'TV Shows'
+                            : item.media_type === 'person'
+                            ? 'People'
+                            : 'Unknown'}
+                        </span>
+                      </div>
                     </li>
                   ))
                 : trendingData.map((item: any) => (
                     <li
                       key={item.id}
                       className="border-b-[1px] flex items-center last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleResultItemClick(item)}
                     >
                       <Image
                         src={searchIcon}
