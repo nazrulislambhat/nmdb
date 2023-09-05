@@ -66,7 +66,6 @@ export default function Search() {
 
         const searchData = await fetchData('search/multi', query, 1, false);
 
-        console.log(searchData);
         const latestResults = searchData.results.map((item: any) => ({
           title: item.title || item.name,
           media_type: item.media_type,
