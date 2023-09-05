@@ -1,6 +1,9 @@
 'use client';
 import { useState, ChangeEvent, useEffect } from 'react';
 import clearIcon from '../../../public/clear.svg';
+import movieIcon from '../../../public/movie.png';
+import personIcon from '../../../public/user.png';
+import televisionIcon from '../../../public/television.png';
 import Image from 'next/image';
 import { fetchData } from '../../utils/api';
 import searchIcon from '../../../public/search-black.svg';
@@ -58,13 +61,33 @@ export default function Search() {
     const fetchSearchResults = async () => {
       try {
         setIsLoading(true);
-        const searchEndpoint = `search/multi/?query=${searchQuery}`;
-        console.log(searchEndpoint);
-        const searchData = await fetchData(searchEndpoint);
-        console.log(searchData);
-        setSearchResults(searchData.results);
+        const query = encodeURIComponent(searchQuery); // Encode the search query
+        const options = {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 1867f6d6d149421642a02ed42eafb2b0',
+          },
+        };
+
+        const searchEndpoint = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`;
+
+        const response = await fetch(searchEndpoint, options);
+        const searchData = await response.json();
+
+        const latestResults = searchData.results.map((item: any) => ({
+          title: item.title || item.name,
+          media_type: item.media_type,
+        }));
+
+        setSearchResults(latestResults);
+
         setIsLoading(false);
         setHasSearched(true);
+
+        latestResults.forEach((result: any) => {
+          console.log(result.title);
+        });
       } catch (error) {
         console.error('Error fetching search results:', error);
         setIsLoading(false);
@@ -72,7 +95,7 @@ export default function Search() {
       }
     };
 
-    const timeoutId = setTimeout(fetchSearchResults, 1000);
+    const timeoutId = setTimeout(fetchSearchResults, 500);
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
@@ -80,7 +103,7 @@ export default function Search() {
     <div className="search-wrapper bg-white  z-40 flex justify-center w-full flex-col absolute top-[57px] left-0">
       <div className="search-container w-screen max-w-screen border-b-2 px-[26%] bg-white border-gray-300 py-1">
         <div className="flex justify-center items-center ">
-          <Image src={searchIcon} alt="Search Icon" width={20} height={20} />
+          <Image src={searchIcon} alt="Search Icon" width={15} height={15} />
           <input
             type="text"
             placeholder="Search for a movie, tv show, person..."
@@ -92,15 +115,15 @@ export default function Search() {
             <Image
               src={loadingIcon}
               alt="Loading Icon"
-              width={20}
-              height={20}
+              width={15}
+              height={15}
             />
           ) : (
             <Image
               src={clearIcon}
               alt="Clear Icon"
-              width={20}
-              height={20}
+              width={15}
+              height={15}
               onClick={handleClear}
               className="cursor-pointer"
             />
@@ -111,8 +134,8 @@ export default function Search() {
             <Image
               src={trendingIcon}
               alt="Trending Icon"
-              width={20}
-              height={20}
+              width={15}
+              height={15}
               className="mr-1"
             />
             {hasSearched ? 'Search Results' : 'Latest Trending'}
@@ -123,32 +146,62 @@ export default function Search() {
                 ? searchResults.map((item: any) => (
                     <li
                       key={item.id}
-                      className="border-b-[1px] flex last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
+                      className="border-b-[1px] flex items-center last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
                     >
-                      <Image
-                        src={searchIcon}
-                        alt="Search Icon"
-                        width={15}
-                        height={15}
-                        className="mr-1"
-                      />
+                      {item.media_type === 'movie' ? (
+                        <Image
+                          src={movieIcon}
+                          alt="Movie Icon"
+                          width={15}
+                          height={10}
+                          className="mr-2 w-[15px] h-[15px]"
+                        />
+                      ) : item.media_type === 'person' ? (
+                        <Image
+                          src={personIcon}
+                          alt="Person Icon"
+                          width={15}
+                          height={10}
+                          className="mr-2 w-[15px] h-[15px]"
+                        />
+                      ) : item.media_type === 'tv' ? (
+                        <Image
+                          src={televisionIcon}
+                          alt="Television Icon"
+                          width={15}
+                          height={10}
+                          className="mr-2 w-[15px] h-[15px]"
+                        />
+                      ) : (
+                        <Image
+                          src={searchIcon}
+                          alt="Search Icon"
+                          width={15}
+                          height={15}
+                          className="mr-2 w-[15px] h-[15px]"
+                        />
+                      )}
 
-                      <span className="">{item.title || item.name}</span>
+                      <span className="font-base">
+                        {item.title || item.name}
+                      </span>
                     </li>
                   ))
                 : trendingData.map((item: any) => (
                     <li
                       key={item.id}
-                      className="border-b-[1px] flex last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
+                      className="border-b-[1px] flex items-center last:border-b-[0px] px-2 py-[2px] hover:bg-gray-100 cursor-pointer"
                     >
                       <Image
                         src={searchIcon}
                         alt="Search Icon"
                         width={15}
                         height={15}
-                        className="mr-1"
+                        className="mr-2 w-[15px] h-[15px]"
                       />
-                      <span className="">{item.title || item.name}</span>
+                      <span className="font-base">
+                        {item.title || item.name}
+                      </span>
                     </li>
                   ))}
             </ul>
