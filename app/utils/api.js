@@ -1,5 +1,3 @@
-// utils/api.js
-
 async function fetchData(endpoint, query, page = 1, includeAdult = false) {
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
