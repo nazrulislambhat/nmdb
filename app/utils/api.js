@@ -1,5 +1,3 @@
-// utils/api.js
-
 async function fetchData(endpoint, query, page = 1, includeAdult = false) {
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -11,7 +9,6 @@ async function fetchData(endpoint, query, page = 1, includeAdult = false) {
     page: page,
   });
 
-  // Append the query parameter to the URL
   queryParams.append('query', query);
 
   const apiUrl = `${API_URL}${endpoint}?${queryParams.toString()}`;
