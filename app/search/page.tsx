@@ -1,155 +1,171 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import posterImage from '../../public/avengers.jpg';
-
+import { fetchData } from '../utils/api';
+import noImage from '../../public/no-image.svg';
 export default function Search() {
-  const [searchQuery, setsearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
+
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setsearchQuery(e.target.value);
+    setSearchQuery(e.target.value);
   };
 
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      try {
+        setIsLoading(true);
+        const query = encodeURIComponent(searchQuery);
+
+        const searchData = await fetchData('search/multi', query, 1, false);
+        console.log(searchData);
+        const latestResults = searchData.results.map((item: any) => ({
+          title: item.title || item.name,
+          media_type: item.media_type,
+          poster_path: item.poster_path,
+          overview: item.overview,
+          release_date: item.release_date || item.first_air_date,
+        }));
+
+        const latest20Results = latestResults.slice(0, 20);
+        setSearchResults(latest20Results);
+
+        setIsLoading(false);
+        setHasSearched(true);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+        setIsLoading(false);
+        setHasSearched(true);
+      }
+    };
+
+    if (searchQuery) {
+      const timeoutId = setTimeout(fetchSearchResults, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchQuery]);
+
+  const calculateTotalResultsByMediaType = (mediaType: string) => {
+    return searchResults.filter((result) => result.media_type === mediaType)
+      .length;
+  };
+
+  const totalMovies = calculateTotalResultsByMediaType('movie');
+  const totalTVShows = calculateTotalResultsByMediaType('tv');
+  const totalPersons = calculateTotalResultsByMediaType('person');
+  const totalCollections = calculateTotalResultsByMediaType('collections');
+  const totalCompanies = calculateTotalResultsByMediaType('companies');
+  const totalKeywords = calculateTotalResultsByMediaType('keywords');
+  const totalNetworks = calculateTotalResultsByMediaType('networks');
+
   return (
-    <>
+    <div className="mx-auto max-w-[1440px] min-h-screen">
       <div className="search-container">
         <input
           type="text"
           placeholder="Search for a movie, tv show, person......"
           value={searchQuery}
           onChange={handleSearchChange}
-          className="px-5 py-3 w-screen border-b-[1px] border-gray-300 focus-visible:outline-0"
+          className=" px-5 py-3 border-b-[1px] border-gray-300 focus-visible:outline-0 w-full"
         />
       </div>
-      <div className="search-result flex gap-2 mx-28 my-8">
-        <div className="result-filter border-2 rounded-lg w-[450px]">
-          <h2 className="bg-mainColor px-5 py-5 text-white rounded-t-lg font-base text-xl">
+      <div className="search-result flex gap-2 my-8">
+        <div className="result-filter border-2 rounded-lg min-w-[300px]">
+          <h2 className="bg-mainColor px-5 py-5  text-white rounded-t-lg font-base text-xl">
             Search Results
           </h2>
           <ul className="rounded-b-lg mt-2 mb-2">
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">Movies</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                109
+                {totalMovies}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">TV Shows</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                15
+                {totalTVShows}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">Collections</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                6
+                {totalCollections}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">Keywords</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                1
+                {totalKeywords}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">People</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
+                {totalPersons}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold hover:bg-gray-200">
               <Link href="/">Companies</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
+                {totalCompanies}
               </span>
             </li>
             <li className="flex justify-between content-center items-center cursor-pointer px-4 py-1 hover:font-bold mb-2 hover:bg-gray-200">
               <Link href="/">Networks</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
+                {totalNetworks}
               </span>
             </li>
           </ul>
         </div>
-        <div className="result-cards">
-          <div className="result-card max-h-[160px] flex rounded-lg border-[1px] mb-4">
-            <Image
-              src={posterImage}
-              width={94}
-              height={141}
-              alt="Movie Poster"
-              className="rounded-l-lg cursor-pointer"
-            />
-            <div className="flex flex-col px-5 py-3 shadow-md">
-              <Link
-                href="/"
-                className="font-semibold text-3xl hover:text-gray-600 cursor-pointer"
+        <div className="result-cards flex flex-col gap-4 ">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : hasSearched && searchResults.length === 0 ? (
+            <p>No results found</p>
+          ) : (
+            searchResults.map((result, index) => (
+              <div
+                className="result-card h-[140px] overflow-hidden rounded-md flex box-shadow"
+                key={index}
               >
-                Avengers: Endgame
-              </Link>
-              <p className="text-gray-400 pb-4">April 27, 2018</p>
-              <p>
-                As the Avengers and their allies have continued to protect the
-                world from threats too large for any one hero to handle, a new
-                danger has emerged from the cosmic shadows: Thanos. A despot of
-                intergalactic infamy, his goal is to collect all six Infinity
-                Stones, artifacts of
-              </p>
-            </div>
-          </div>
-          <div className="result-card max-h-[160px] flex rounded-lg border-[1px] mb-4">
-            <Image
-              src={posterImage}
-              width={94}
-              height={141}
-              alt="Movie Poster"
-              className="rounded-l-lg cursor-pointer"
-            />
-            <div className="flex flex-col px-5 py-3 shadow-md">
-              <Link
-                href="/"
-                className="font-semibold text-3xl hover:text-gray-600 cursor-pointer"
-              >
-                Avengers: Endgame
-              </Link>
-              <p className="text-gray-400 pb-4">April 27, 2018</p>
-              <p>
-                As the Avengers and their allies have continued to protect the
-                world from threats too large for any one hero to handle, a new
-                danger has emerged from the cosmic shadows: Thanos. A despot of
-                intergalactic infamy, his goal is to collect all six Infinity
-                Stones, artifacts of
-              </p>
-            </div>
-          </div>
-          <div className="result-card max-h-[160px] flex rounded-lg border-[1px] mb-4">
-            <Image
-              src={posterImage}
-              width={94}
-              height={141}
-              alt="Movie Poster"
-              className="rounded-l-lg cursor-pointer"
-            />
-            <div className="flex flex-col px-5 py-3 shadow-md">
-              <Link
-                href="/"
-                className="font-semibold text-3xl hover:text-gray-600 cursor-pointer"
-              >
-                Avengers: Endgame
-              </Link>
-              <p className="text-gray-400 pb-4">April 27, 2018</p>
-              <p>
-                As the Avengers and their allies have continued to protect the
-                world from threats too large for any one hero to handle, a new
-                danger has emerged from the cosmic shadows: Thanos. A despot of
-                intergalactic infamy, his goal is to collect all six Infinity
-                Stones, artifacts of
-              </p>
-            </div>
-          </div>
+                {result.poster_path ? (
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${result.poster_path}`}
+                    alt={result.title}
+                    width={94}
+                    height={141}
+                    className="rounded-l-lg cursor-pointer object-fit"
+                  />
+                ) : (
+                  <Image
+                    src={noImage}
+                    alt={result.title}
+                    width={94}
+                    height={141}
+                    className="rounded-l-lg cursor-pointer object-fit min-h-[140px] bg-gray-200"
+                  />
+                )}
+
+                <div className="movie-info px-5 py-4 ">
+                  <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
+                    {result.title}
+                  </p>
+                  <p className="text-gray-400 pb-4">{result.release_date}</p>
+                  <p className="text-clip overflow-hidden max-h-[2.8em]">
+                    {result.overview}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

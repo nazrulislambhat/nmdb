@@ -22,3 +22,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #dfdfdf;
 }
+.box-shadow {
+  box-shadow: 0px 0px 2px 2px #dfdfdf;
+}

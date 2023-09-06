@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import noImage from '../../../public/no-image.png';
+import noImage from '../../../public/no-image.svg';
 
 interface MediaItem {
   title: string;
