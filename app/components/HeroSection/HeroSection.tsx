@@ -23,7 +23,7 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
   };
   return (
     <div
-      className="hero-section px-0 py-14 g-cover bg-center bg-no-repeat"
+      className="hero-section px-0 py-14 g-cover bg-center bg-no-repeat z-0"
       style={{ backgroundImage: `url(${openhImage.src})` }}
     >
       <div className="px-10 py-8">
@@ -36,7 +36,7 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
             value={searchQuery}
             onChange={handleSearchChange}
             onKeyPress={handleSearchKeyPress}
-            className="px-5 py-3 rounded-full relative w-[100%] focus-visible:outline-0"
+            className="px-5 py-3 rounded-full z-0 relative w-[100%] focus-visible:outline-0"
           />
           <Link
             href={`/search?query=${searchQuery}`}
