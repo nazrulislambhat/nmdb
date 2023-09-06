@@ -11,7 +11,6 @@ async function fetchData(endpoint, query, page = 1, includeAdult = false) {
     page: page,
   });
 
-  // Append the query parameter to the URL
   queryParams.append('query', query);
 
   const apiUrl = `${API_URL}${endpoint}?${queryParams.toString()}`;
