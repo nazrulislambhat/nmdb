@@ -12,7 +12,6 @@ async function fetchData(endpoint, query, page = 1, includeAdult = false) {
   queryParams.append('query', query);
 
   const apiUrl = `${API_URL}${endpoint}?${queryParams.toString()}`;
-  console.log(apiUrl);
   const response = await fetch(apiUrl);
   const data = await response.json();
   return data;
