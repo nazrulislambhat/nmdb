@@ -24,7 +24,7 @@ export default function Search() {
         const query = encodeURIComponent(searchQuery);
 
         const searchData = await fetchData('search/multi', query, 1, false);
-        console.log(searchData);
+
         const latestResults = searchData.results.map((item: any) => ({
           title: item.title || item.name,
           name: item.original_name || item.name,
@@ -68,7 +68,7 @@ export default function Search() {
       const timeoutId = setTimeout(fetchSearchResults, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [searchQuery, selectedMediaType]);
+  }, [searchQuery]);
 
   const calculateTotalResultsByMediaType = (mediaType: string) => {
     return searchResults.filter((result) => result.media_type === mediaType)
@@ -81,10 +81,6 @@ export default function Search() {
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  };
-
-  const handleMediaTypeClick = (mediaType: string) => {
-    setSelectedMediaType(mediaType);
   };
 
   return (
@@ -255,15 +251,6 @@ export default function Search() {
                   </div>
                 </div>
               ))
-            ) : selectedMediaType === 'collections' ? (
-              collectionResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {/* collection result */}
-                </div>
-              ))
             ) : selectedMediaType === 'person' ? (
               personResults.map((result, index) => (
                 <div
@@ -297,33 +284,6 @@ export default function Search() {
                       {result.known_for_department}
                     </p>
                   </div>
-                </div>
-              ))
-            ) : selectedMediaType === 'companies' ? (
-              companiesResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {/* companies result */}
-                </div>
-              ))
-            ) : selectedMediaType === 'keywords' ? (
-              keywordsResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {/* keywords result */}
-                </div>
-              ))
-            ) : selectedMediaType === 'networks' ? (
-              networksResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {/* networks result */}
                 </div>
               ))
             ) : (
