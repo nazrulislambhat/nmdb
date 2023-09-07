@@ -39,11 +39,11 @@ export default function Search() {
         const movieResults = latestResults.filter(
           (result: any) => result.media_type === 'movie'
         );
-        console.log(movieResults);
+
         const tvResults = latestResults.filter(
           (result: any) => result.media_type === 'tv'
         );
-        console.log(tvResults);
+
         const personResults = latestResults.filter(
           (result: any) => result.media_type === 'person'
         );
@@ -213,7 +213,6 @@ export default function Search() {
                       className="rounded-l-lg cursor-pointer object-fit min-h-[140px] bg-gray-200"
                     />
                   )}
-
                   <div className="movie-info px-5 py-4">
                     <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
                       {result.title}
