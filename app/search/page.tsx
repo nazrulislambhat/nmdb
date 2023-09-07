@@ -59,7 +59,10 @@ export default function Search({ queryParam }: SearchProps) {
   }, [searchQuery]);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const newSearchQuery = e.target.value;
+    setSearchQuery(newSearchQuery);
+
+    router.replace(`/search?query=${newSearchQuery}`);
   };
 
   const mediaTypeKeys = Object.keys(mediaTypes);
