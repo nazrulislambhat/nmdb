@@ -17,7 +17,7 @@ export default function Search() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [isSearchBoxActive, setIsSearchBoxActive] = useState<boolean>(false); // Flag for search box activation
+  const [isSearchBoxActive, setIsSearchBoxActive] = useState<boolean>(false);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
