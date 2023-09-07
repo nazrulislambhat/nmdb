@@ -8,7 +8,7 @@ import Image from 'next/image';
 import searchIcon from '../../../public/search-black.svg';
 import trendingIcon from '../../../public/trending.svg';
 import loadingIcon from '../../../public/loading.gif';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { fetchData } from '../../utils/api';
 
 export default function Search() {
@@ -18,11 +18,19 @@ export default function Search() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [isSearchBoxActive, setIsSearchBoxActive] = useState<boolean>(false);
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(true);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const newSearchQuery = e.target.value;
+    setSearchQuery(newSearchQuery);
   };
 
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setShowSearchResults(false);
+    }
+  };
   const handleClear = () => {
     setSearchQuery('');
     setHasSearched(false);
@@ -31,6 +39,13 @@ export default function Search() {
   const handleSearchBoxClick = () => {
     setIsSearchBoxActive(true);
   };
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname === '/search') {
+      setShowSearchResults(false);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const fetchTrendingData = async () => {
@@ -132,6 +147,7 @@ export default function Search() {
             placeholder="Search for a movie, tv show, person..."
             value={searchQuery}
             onChange={handleSearchChange}
+            onKeyPress={handleEnterKey}
             className="flex-grow py-2 px-4  focus-visible:outline-0"
           />
           {isLoading ? (
@@ -154,7 +170,7 @@ export default function Search() {
         </div>
         {isSearchBoxActive && (
           <div className="search-results">
-            {!isLoading && (
+            {showSearchResults && !isLoading && (
               <ul>
                 <h2 className="text-2xl flex items-center font-bold bg-gray-100 p-2">
                   <Image
