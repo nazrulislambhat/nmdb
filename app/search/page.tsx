@@ -1,8 +1,10 @@
 'use client';
 import { useState, ChangeEvent, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { fetchData } from '../utils/api';
-
+interface SearchProps {
+  queryParam: string;
+}
 const mediaTypes = {
   movie: { label: 'Movies', endpoint: 'search/movie' },
   tv: { label: 'TV Shows', endpoint: 'search/tv' },
@@ -12,7 +14,7 @@ const mediaTypes = {
   keyword: { label: 'Keywords', endpoint: 'search/keyword' },
 };
 
-export default function Search() {
+export default function Search({ queryParam }: SearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [selectedMediaType, setSelectedMediaType] = useState<string>('movie');
@@ -24,6 +26,8 @@ export default function Search() {
     collection: 0,
     keyword: 0,
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -83,11 +87,11 @@ export default function Search() {
                 className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                   selectedMediaType === mediaType ? 'selected' : ''
                 } hover:font-bold hover:bg-gray-200`}
-                onClick={() => setSelectedMediaType(mediaType)}
+                onClick={() => {
+                  router.push(`/search/${mediaType}/?query=${searchQuery}`);
+                }}
               >
-                <Link href="/">
-                  {mediaTypes[mediaType as keyof typeof mediaTypes].label}
-                </Link>
+                {mediaTypes[mediaType as keyof typeof mediaTypes].label}
                 <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
                   {totalResults[mediaType]}
                 </span>

@@ -2,6 +2,7 @@
 import { useState, ChangeEvent } from 'react';
 import Link from 'next/link';
 import openhImage from '../../../public/openh.jpg';
+import { useRouter } from 'next/navigation';
 
 interface HeroSectionProps {
   title: string;
@@ -15,12 +16,15 @@ export default function HeroSection({ title, subtitle }: HeroSectionProps) {
     setSearchQuery(e.target.value);
   };
 
+  const router = useRouter();
+
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      window.location.href = `/search?query=${searchQuery}`;
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
   };
+
   return (
     <div
       className="hero-section px-0 py-14 g-cover bg-center bg-no-repeat z-0"
