@@ -11,11 +11,7 @@ export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [movieResults, setMovieResults] = useState<any[]>([]);
   const [tvResults, setTVResults] = useState<any[]>([]);
-  const [collectionResults, setCollectionResults] = useState<any[]>([]);
   const [personResults, setPersonResults] = useState<any[]>([]);
-  const [companiesResults, setCompaniesResults] = useState<any[]>([]);
-  const [keywordsResults, setKeywordsResults] = useState<any[]>([]);
-  const [networksResults, setNetworksResults] = useState<any[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -28,7 +24,7 @@ export default function Search() {
         const query = encodeURIComponent(searchQuery);
 
         const searchData = await fetchData('search/multi', query, 1, false);
-
+        console.log(searchData);
         const latestResults = searchData.results.map((item: any) => ({
           title: item.title || item.name,
           name: item.original_name || item.name,
@@ -53,28 +49,9 @@ export default function Search() {
           (result: any) => result.media_type === 'person'
         );
 
-        const collectionsResults = latestResults.filter(
-          (result: any) => result.media_type === 'collections'
-        );
-
-        const companiesResults = latestResults.filter(
-          (result: any) => result.media_type === 'companies'
-        );
-
-        const keywordsResults = latestResults.filter(
-          (result: any) => result.media_type === 'keywords'
-        );
-        const networksResults = latestResults.filter(
-          (result: any) => result.media_type === 'networks'
-        );
-
         setMovieResults(movieResults);
         setTVResults(tvResults);
         setPersonResults(personResults);
-        setCollectionResults(collectionResults);
-        setNetworksResults(networksResults);
-        setCompaniesResults(companiesResults);
-        setKeywordsResults(keywordsResults);
 
         setSearchResults(latestResults);
 
@@ -101,10 +78,6 @@ export default function Search() {
   const totalMovies = calculateTotalResultsByMediaType('movie');
   const totalTVShows = calculateTotalResultsByMediaType('tv');
   const totalPersons = calculateTotalResultsByMediaType('person');
-  const totalCollections = calculateTotalResultsByMediaType('collections');
-  const totalCompanies = calculateTotalResultsByMediaType('companies');
-  const totalKeywords = calculateTotalResultsByMediaType('keywords');
-  const totalNetworks = calculateTotalResultsByMediaType('networks');
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -155,17 +128,6 @@ export default function Search() {
             </li>
             <li
               className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'collections' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('collections')}
-            >
-              <Link href="/">Collections</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalCollections}
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                 selectedMediaType === 'person' ? 'selected' : ''
               } hover:font-bold hover:bg-gray-200`}
               onClick={() => setSelectedMediaType('person')}
@@ -177,35 +139,43 @@ export default function Search() {
             </li>
             <li
               className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
+                selectedMediaType === 'collections' ? 'selected' : ''
+              } hover:font-bold hover:bg-gray-200`}
+            >
+              <Link href="/">Collections</Link>
+              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
+                0
+              </span>
+            </li>
+
+            <li
+              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                 selectedMediaType === 'companies' ? 'selected' : ''
               } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('companies')}
             >
               <Link href="/">Companies</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalCompanies}
+                0
               </span>
             </li>
             <li
               className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                 selectedMediaType === 'keywords' ? 'selected' : ''
               } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('keywords')}
             >
               <Link href="/">Collections</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalKeywords}
+                0
               </span>
             </li>
             <li
               className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                 selectedMediaType === 'networks' ? 'selected' : ''
               } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('networks')}
             >
               <Link href="/">Networks</Link>
               <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalNetworks}
+                0
               </span>
             </li>
           </ul>
