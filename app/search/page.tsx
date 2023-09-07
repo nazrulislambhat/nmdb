@@ -2,66 +2,52 @@
 
 import { useState, ChangeEvent, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { fetchData } from '../utils/api';
-import noImage from '../../public/no-image.svg';
-import noPerson from '../../public/no-person.svg';
+
+const mediaTypes = {
+  movie: { label: 'Movies', endpoint: 'search/movie' },
+  tv: { label: 'TV Shows', endpoint: 'search/tv' },
+  person: { label: 'People', endpoint: 'search/person' },
+  company: { label: 'Companies', endpoint: 'search/company' },
+  collection: { label: 'Collections', endpoint: 'search/collection' },
+  keyword: { label: 'Keywords', endpoint: 'search/keyword' },
+};
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [movieResults, setMovieResults] = useState<any[]>([]);
-  const [tvResults, setTVResults] = useState<any[]>([]);
-  const [personResults, setPersonResults] = useState<any[]>([]);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
+
   const [selectedMediaType, setSelectedMediaType] = useState<string>('movie');
+  const [totalResults, setTotalResults] = useState<{ [key: string]: number }>({
+    movie: 0,
+    tv: 0,
+    person: 0,
+    company: 0,
+    collection: 0,
+    keyword: 0,
+  });
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      try {
-        setIsLoading(true);
-        const query = encodeURIComponent(searchQuery);
+      const query = encodeURIComponent(searchQuery);
 
-        const searchData = await fetchData('search/multi', query, 1, false);
+      const promises = Object.keys(mediaTypes).map(async (mediaType) => {
+        const endpoint =
+          mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
+        const searchData = await fetchData(endpoint, query, 1, false);
 
-        const latestResults = searchData.results.map((item: any) => ({
-          title: item.title || item.name,
-          name: item.original_name || item.name,
-          media_type: item.media_type,
-          poster_path: item.poster_path,
-          profile_path: item.profile_path,
-          overview: item.overview,
-          release_date: item.release_date,
-          first_air_date: item.first_air_date,
-          known_for_department: item.known_for_department,
-        }));
+        const totalResults = searchData ? searchData.total_results : 0;
 
-        const movieResults = latestResults.filter(
-          (result: any) => result.media_type === 'movie'
-        );
+        return { mediaType, totalResults };
+      });
 
-        const tvResults = latestResults.filter(
-          (result: any) => result.media_type === 'tv'
-        );
+      const results = await Promise.all(promises);
 
-        const personResults = latestResults.filter(
-          (result: any) => result.media_type === 'person'
-        );
-
-        setMovieResults(movieResults);
-        setTVResults(tvResults);
-        setPersonResults(personResults);
-
-        setSearchResults(latestResults);
-
-        setIsLoading(false);
-        setHasSearched(true);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-        setIsLoading(false);
-        setHasSearched(true);
-      }
+      const newTotalResults: { [key: string]: number } = {};
+      results.forEach((result) => {
+        newTotalResults[result.mediaType] = result.totalResults;
+      });
+      setTotalResults(newTotalResults);
     };
 
     if (searchQuery) {
@@ -70,25 +56,18 @@ export default function Search() {
     }
   }, [searchQuery]);
 
-  const calculateTotalResultsByMediaType = (mediaType: string) => {
-    return searchResults.filter((result) => result.media_type === mediaType)
-      .length;
-  };
-
-  const totalMovies = calculateTotalResultsByMediaType('movie');
-  const totalTVShows = calculateTotalResultsByMediaType('tv');
-  const totalPersons = calculateTotalResultsByMediaType('person');
-
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
+  const mediaTypeKeys = Object.keys(mediaTypes);
 
   return (
     <div className="mx-auto max-w-[1440px] min-h-screen">
       <div className="search-container">
         <input
           type="text"
-          placeholder="Search for a movie, tv show, person..."
+          placeholder="Search for a movie, TV show, person..."
           value={searchQuery}
           onChange={handleSearchChange}
           className="px-5 py-3 border-b-[1px] border-gray-300 focus-visible:outline-0 w-full"
@@ -100,198 +79,23 @@ export default function Search() {
             Search Results
           </h2>
           <ul className="rounded-b-lg mt-2 mb-2">
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'movie' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('movie')}
-            >
-              <Link href="/">Movies</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalMovies}
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'tv' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('tv')}
-            >
-              <Link href="/">TV Shows</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalTVShows}
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'person' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-              onClick={() => setSelectedMediaType('person')}
-            >
-              <Link href="/">People</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                {totalPersons}
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'collections' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-            >
-              <Link href="/">Collections</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
-              </span>
-            </li>
-
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'companies' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-            >
-              <Link href="/">Companies</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'keywords' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-            >
-              <Link href="/">Collections</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
-              </span>
-            </li>
-            <li
-              className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
-                selectedMediaType === 'networks' ? 'selected' : ''
-              } hover:font-bold hover:bg-gray-200`}
-            >
-              <Link href="/">Networks</Link>
-              <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
-                0
-              </span>
-            </li>
+            {mediaTypeKeys.map((mediaType) => (
+              <li
+                key={mediaType}
+                className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
+                  selectedMediaType === mediaType ? 'selected' : ''
+                } hover:font-bold hover:bg-gray-200`}
+                onClick={() => setSelectedMediaType(mediaType)}
+              >
+                <Link href="/">
+                  {mediaTypes[mediaType as keyof typeof mediaTypes].label}
+                </Link>
+                <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
+                  {totalResults[mediaType]}
+                </span>
+              </li>
+            ))}
           </ul>
-        </div>
-        <div className="result-cards flex flex-col gap-4">
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : hasSearched ? (
-            selectedMediaType === 'movie' ? (
-              movieResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {result.poster_path ? (
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w500${result.poster_path}`}
-                      alt={result.title}
-                      width={94}
-                      height={141}
-                      className="rounded-l-lg cursor-pointer object-fit"
-                    />
-                  ) : (
-                    <Image
-                      src={noImage}
-                      alt={result.title}
-                      width={94}
-                      height={141}
-                      className="rounded-l-lg cursor-pointer object-fit min-h-[140px] bg-gray-200"
-                    />
-                  )}
-                  <div className="movie-info px-5 py-4">
-                    <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
-                      {result.title}
-                    </p>
-                    <p className="text-gray-400 pb-4">{result.release_date}</p>
-                    <p className="text-clip overflow-hidden max-h-[2.8em]">
-                      {result.overview}
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : selectedMediaType === 'tv' ? (
-              tvResults.map((result, index) => (
-                <div
-                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
-                  key={index}
-                >
-                  {result.poster_path ? (
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w500${result.poster_path}`}
-                      alt={result.title}
-                      width={94}
-                      height={141}
-                      className="rounded-l-lg cursor-pointer object-fit"
-                    />
-                  ) : (
-                    <Image
-                      src={noImage}
-                      alt={result.title}
-                      width={94}
-                      height={141}
-                      className="rounded-l-lg cursor-pointer object-fit min-h-[140px] bg-gray-200"
-                    />
-                  )}
-
-                  <div className="movie-info px-5 py-4">
-                    <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
-                      {result.title}
-                    </p>
-                    <p className="text-gray-400 pb-4">
-                      {result.first_air_date}
-                    </p>
-                    <p className="text-clip overflow-hidden max-h-[2.8em]">
-                      {result.overview}
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : selectedMediaType === 'person' ? (
-              personResults.map((result, index) => (
-                <div
-                  className="result-card overflow-hidden flex items-center"
-                  key={index}
-                >
-                  {result.profile_path ? (
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w500${result.profile_path}`}
-                      alt={result.name}
-                      width={70}
-                      height={70}
-                      className="cursor-pointer rounded-lg h-[70px]"
-                    />
-                  ) : (
-                    <Image
-                      src={noPerson}
-                      alt={result.name}
-                      width={70}
-                      height={70}
-                      className="cursor-pointer object-contain bg-gray-200 rounded-lg"
-                    />
-                  )}
-
-                  <div className="movie-info px-5 py-4">
-                    <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
-                      {result.name}
-                    </p>
-                    <p className="text-base hover:text-gray-600 cursor-pointer">
-                      {result.known_for_department} •{' '}
-                      {result.known_for_department}
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>No results found</p>
-            )
-          ) : (
-            <p>No results found</p>
-          )}
         </div>
       </div>
     </div>
