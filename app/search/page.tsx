@@ -1,8 +1,6 @@
 'use client';
-
 import { useState, ChangeEvent, useEffect } from 'react';
 import Link from 'next/link';
-
 import { fetchData } from '../utils/api';
 
 const mediaTypes = {
