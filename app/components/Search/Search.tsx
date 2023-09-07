@@ -143,18 +143,18 @@ export default function Search() {
           )}
         </div>
         <div className="search-results">
-          <h2 className="text-2xl flex items-center font-bold bg-gray-100 p-2">
-            <Image
-              src={trendingIcon}
-              alt="Trending Icon"
-              width={20}
-              height={20}
-              className="mr-1"
-            />
-            {hasSearched ? 'Search Results' : 'Trending'}
-          </h2>
           {!isLoading && (
             <ul>
+              <h2 className="text-2xl flex items-center font-bold bg-gray-100 p-2">
+                <Image
+                  src={trendingIcon}
+                  alt="Trending Icon"
+                  width={20}
+                  height={20}
+                  className="mr-1"
+                />
+                {hasSearched ? 'Search Results' : 'Trending'}
+              </h2>
               {hasSearched && searchResults
                 ? searchResults.map((item: any) => (
                     <li
