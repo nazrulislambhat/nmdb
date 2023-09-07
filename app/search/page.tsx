@@ -5,11 +5,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { fetchData } from '../utils/api';
 import noImage from '../../public/no-image.svg';
+import noPerson from '../../public/no-person.svg';
+
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [movieResults, setMovieResults] = useState<any[]>([]);
   const [tvResults, setTVResults] = useState<any[]>([]);
+  const [collectionResults, setCollectionResults] = useState<any[]>([]);
   const [personResults, setPersonResults] = useState<any[]>([]);
+  const [companiesResults, setCompaniesResults] = useState<any[]>([]);
+  const [keywordsResults, setKeywordsResults] = useState<any[]>([]);
+  const [networksResults, setNetworksResults] = useState<any[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -22,7 +28,6 @@ export default function Search() {
         const query = encodeURIComponent(searchQuery);
 
         const searchData = await fetchData('search/multi', query, 1, false);
-        console.log(searchData);
 
         const latestResults = searchData.results.map((item: any) => ({
           title: item.title || item.name,
@@ -47,10 +52,29 @@ export default function Search() {
         const personResults = latestResults.filter(
           (result: any) => result.media_type === 'person'
         );
-        console.log(personResults);
+
+        const collectionsResults = latestResults.filter(
+          (result: any) => result.media_type === 'collections'
+        );
+
+        const companiesResults = latestResults.filter(
+          (result: any) => result.media_type === 'companies'
+        );
+
+        const keywordsResults = latestResults.filter(
+          (result: any) => result.media_type === 'keywords'
+        );
+        const networksResults = latestResults.filter(
+          (result: any) => result.media_type === 'networks'
+        );
+
         setMovieResults(movieResults);
         setTVResults(tvResults);
         setPersonResults(personResults);
+        setCollectionResults(collectionResults);
+        setNetworksResults(networksResults);
+        setCompaniesResults(companiesResults);
+        setKeywordsResults(keywordsResults);
 
         setSearchResults(latestResults);
 
@@ -224,8 +248,7 @@ export default function Search() {
                   </div>
                 </div>
               ))
-            ) : (
-              selectedMediaType === 'tv' &&
+            ) : selectedMediaType === 'tv' ? (
               tvResults.map((result, index) => (
                 <div
                   className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
@@ -262,6 +285,79 @@ export default function Search() {
                   </div>
                 </div>
               ))
+            ) : selectedMediaType === 'collections' ? (
+              collectionResults.map((result, index) => (
+                <div
+                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
+                  key={index}
+                >
+                  {/* collection result */}
+                </div>
+              ))
+            ) : selectedMediaType === 'person' ? (
+              personResults.map((result, index) => (
+                <div
+                  className="result-card overflow-hidden flex items-center"
+                  key={index}
+                >
+                  {result.profile_path ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${result.profile_path}`}
+                      alt={result.name}
+                      width={70}
+                      height={70}
+                      className="cursor-pointer rounded-lg h-[70px]"
+                    />
+                  ) : (
+                    <Image
+                      src={noPerson}
+                      alt={result.name}
+                      width={70}
+                      height={70}
+                      className="cursor-pointer object-contain bg-gray-200 rounded-lg"
+                    />
+                  )}
+
+                  <div className="movie-info px-5 py-4">
+                    <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
+                      {result.name}
+                    </p>
+                    <p className="text-base hover:text-gray-600 cursor-pointer">
+                      {result.known_for_department} •{' '}
+                      {result.known_for_department}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : selectedMediaType === 'companies' ? (
+              companiesResults.map((result, index) => (
+                <div
+                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
+                  key={index}
+                >
+                  {/* companies result */}
+                </div>
+              ))
+            ) : selectedMediaType === 'keywords' ? (
+              keywordsResults.map((result, index) => (
+                <div
+                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
+                  key={index}
+                >
+                  {/* keywords result */}
+                </div>
+              ))
+            ) : selectedMediaType === 'networks' ? (
+              networksResults.map((result, index) => (
+                <div
+                  className="result-card h-[140px] overflow-hidden rounded-md flex shadow"
+                  key={index}
+                >
+                  {/* networks result */}
+                </div>
+              ))
+            ) : (
+              <p>No results found</p>
             )
           ) : (
             <p>No results found</p>
