@@ -69,7 +69,7 @@ export default function Search({ queryParam }: SearchProps) {
 
   return (
     <div className="mx-auto max-w-[1440px] min-h-screen">
-      {/* <div className="search-container">
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search for a movie, TV show, person..."
@@ -77,7 +77,7 @@ export default function Search({ queryParam }: SearchProps) {
           onChange={handleSearchChange}
           className="px-5 py-3 border-b-[1px] border-gray-300 focus-visible:outline-0 w-full"
         />
-      </div> */}
+      </div>
       <div className="search-result flex gap-2 my-16">
         <div className="result-filter shadow rounded-lg min-w-[300px] max-h-[370px] mr-4">
           <h2 className="bg-mainColor px-5 py-5 text-white rounded-t-lg font-base text-xl">
