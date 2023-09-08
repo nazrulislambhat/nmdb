@@ -35,12 +35,12 @@ function renderMenuItem(item: MenuItem) {
   );
 }
 
-const Navigation: React.FC<NavigationProps> = ({ menuData }) => {
+function Navigation({ menuData }: NavigationProps) {
   return (
     <ul className="flex flex-row items-center space-x-4">
       {menuData.map((item) => renderMenuItem(item))}
     </ul>
   );
-};
+}
 
 export default Navigation;
