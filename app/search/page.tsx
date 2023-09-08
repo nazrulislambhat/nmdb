@@ -2,6 +2,7 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchData } from '../utils/api';
+
 export interface SearchProps {
   queryParam: string;
 }
@@ -15,7 +16,7 @@ const mediaTypes = {
   keyword: { label: 'Keywords', endpoint: 'search/keyword' },
 };
 
-export default function Search({ queryParam }: SearchProps) {
+export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [selectedMediaType, setSelectedMediaType] = useState<string>('movie');
