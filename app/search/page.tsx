@@ -2,9 +2,10 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchData } from '../utils/api';
-interface SearchProps {
+export interface SearchProps {
   queryParam: string;
 }
+
 const mediaTypes = {
   movie: { label: 'Movies', endpoint: 'search/movie' },
   tv: { label: 'TV Shows', endpoint: 'search/tv' },
