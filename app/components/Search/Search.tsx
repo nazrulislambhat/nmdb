@@ -148,7 +148,7 @@ export default function Search() {
             value={searchQuery}
             onChange={handleSearchChange}
             onKeyPress={handleEnterKey}
-            className="flex-grow py-2 px-4  focus-visible:outline-0"
+            className="flex-grow py-2 px-4  focus-visible:outline-0 italic text-gray-300"
           />
           {isLoading ? (
             <Image
