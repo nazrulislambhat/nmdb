@@ -2,7 +2,9 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchData } from '../utils/api';
-
+import Image from 'next/image';
+import noPerson from '../../public/no-person.svg';
+import noImage from '../../public/no-image.svg';
 export interface SearchProps {
   queryParam: string;
 }
@@ -29,36 +31,77 @@ export default function Search() {
     keyword: 0,
   });
 
+  const [currentItems, setCurrentItems] = useState<any[]>([]);
+
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      const query = encodeURIComponent(searchQuery);
+  const fetchSearchResults = async () => {
+    const query = encodeURIComponent(searchQuery);
 
-      const promises = Object.keys(mediaTypes).map(async (mediaType) => {
-        const endpoint =
-          mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
-        const searchData = await fetchData(endpoint, query, 1, false);
+    const promises = Object.keys(mediaTypes).map(async (mediaType) => {
+      const endpoint =
+        mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
 
-        const totalResults = searchData ? searchData.total_results : 0;
+      const searchData = await fetchData(endpoint, query, 1, false);
+      console.log(searchData);
+      if (searchData) {
+        const totalResults = searchData.total_results;
+        let items = [];
+
+        if (mediaType === 'person') {
+          items = searchData.results.map((result: any) => ({
+            name: result.name,
+            knownFor: result.known_for
+              .map((item: any) => item.title)
+              .join(', '),
+            knownForDepartment: result.known_for_department,
+            profilePath: result.profile_path,
+            media_type: result.media_type,
+          }));
+        } else if (mediaType === 'company') {
+          items = searchData.results.map((result: any) => ({
+            name: result.name || result.title,
+            origin_country: result.origin_country,
+            logoPath: result.logo_path,
+          }));
+        } else {
+          items = searchData.results.map((result: any) => ({
+            name: result.name || result.title,
+            media_type: result.media_type,
+            backdropPath: result.backdrop_path,
+            release_date: result.release_date || result.first_air_date,
+            first_air_date: result.first_air_date,
+            overview: result.overview,
+            profile_path: result.profile_path,
+            known_for: result.known_for,
+            known_for_department: result.known_for_department,
+          }));
+        }
+
+        if (mediaType === selectedMediaType) {
+          setCurrentItems(items);
+        }
 
         return { mediaType, totalResults };
-      });
+      } else {
+        return { mediaType, totalResults: 0 };
+      }
+    });
 
-      const results = await Promise.all(promises);
+    const results = await Promise.all(promises);
+    const newTotalResults: { [key: string]: number } = {};
+    results.forEach((result) => {
+      newTotalResults[result.mediaType] = result.totalResults;
+    });
+    setTotalResults(newTotalResults);
+  };
 
-      const newTotalResults: { [key: string]: number } = {};
-      results.forEach((result) => {
-        newTotalResults[result.mediaType] = result.totalResults;
-      });
-      setTotalResults(newTotalResults);
-    };
-
+  useEffect(() => {
     if (searchQuery) {
       const timeoutId = setTimeout(fetchSearchResults, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [searchQuery]);
+  });
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchQuery = e.target.value;
@@ -93,7 +136,8 @@ export default function Search() {
                   selectedMediaType === mediaType ? 'selected' : ''
                 } hover:font-bold hover:bg-gray-200`}
                 onClick={() => {
-                  router.push(`/search/${mediaType}/?query=${searchQuery}`);
+                  setSelectedMediaType(mediaType);
+                  fetchSearchResults();
                 }}
               >
                 {mediaTypes[mediaType as keyof typeof mediaTypes].label}
@@ -103,6 +147,103 @@ export default function Search() {
               </li>
             ))}
           </ul>
+        </div>
+        <div className="selected-media-items flex flex-col">
+          {selectedMediaType !== 'person' &&
+            selectedMediaType !== 'company' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="shadow mb-4 rounded-xl flex gap-4">
+                {item.backdropPath ? (
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
+                    alt={item.title}
+                    width={94}
+                    height={141}
+                    className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
+                  />
+                ) : (
+                  <div className="rounded-l-lg cursor-pointer h-[141px] bg-gray-300 flex items-center justify-center">
+                    <Image
+                      src={noImage}
+                      alt={item.title}
+                      width={94}
+                      height={141}
+                      className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
+                    />
+                  </div>
+                )}
+                <div className="pt-4 pr-2">
+                  <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
+                    {item.name}
+                  </p>
+                  <p className="text-gray-400 pb-4">{item.release_date}</p>
+                  <p className="text-clip overflow-hidden max-h-[2.8em]">
+                    {item.overview}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+          {selectedMediaType === 'person' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="flex content-center mb-4 gap-4">
+                <div className="cursor-pointer h-[70px] bg-gray-300 rounded-lg flex items-center justify-center">
+                  {item.profilePath ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${item.profilePath}`}
+                      alt={item.name}
+                      width={70}
+                      height={70}
+                      className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
+                    />
+                  ) : (
+                    <Image
+                      src={noPerson}
+                      alt={item.name}
+                      width={70}
+                      height={70}
+                      className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
+                    />
+                  )}
+                </div>
+                <div className="pr-2 pt-2">
+                  <p className="font-semibold text-base hover:text-gray-600 cursor-pointer">
+                    {item.name}
+                  </p>
+                  <p className="text-gray-900 text-sm">
+                    {item.knownForDepartment} • {item.knownFor}
+                  </p>
+                </div>
+              </div>
+            ))}
+          {selectedMediaType === 'company' &&
+            currentItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex content-center items-center	w-[50vw] border-b-[1px] py-2 border-black"
+              >
+                <div className="cursor-pointer">
+                  {item.logoPath ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${item.logoPath}`}
+                      alt={item.name}
+                      width={100}
+                      height={40}
+                      className="cursor-pointer min-h-[40px] max-h-[40px] min-w-[40px] max-w-[40px]"
+                    />
+                  ) : (
+                    <p>{item.name}</p>
+                  )}
+                </div>
+                {item.origin_country && (
+                  <div className="">
+                    <span className="ml-2 text-white font-base text-xs bg-gray-300 px-[10px] py-[2px] rounded-md w-fit">
+                      {item.origin_country}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
         </div>
       </div>
     </div>
