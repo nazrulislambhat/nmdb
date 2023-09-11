@@ -5,6 +5,8 @@ import { fetchData } from '../utils/api';
 import Image from 'next/image';
 import noPerson from '../../public/no-person.svg';
 import noImage from '../../public/no-image.svg';
+import { Pagination } from 'antd';
+
 export interface SearchProps {
   queryParam: string;
 }
@@ -20,7 +22,8 @@ const mediaTypes = {
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState<string>('');
-
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedMediaType, setSelectedMediaType] = useState<string>('movie');
   const [totalResults, setTotalResults] = useState<{ [key: string]: number }>({
     movie: 0,
@@ -80,6 +83,10 @@ export default function Search() {
 
         if (mediaType === selectedMediaType) {
           setCurrentItems(items);
+
+          const itemsPerPage = 20;
+          const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
+          setTotalPages(calculatedTotalPages);
         }
 
         return { mediaType, totalResults };
@@ -246,6 +253,11 @@ export default function Search() {
             ))}
         </div>
       </div>
+      <Pagination
+        defaultCurrent={currentPage}
+        total={totalPages * 10}
+        className="text-center"
+      />
     </div>
   );
 }
