@@ -101,7 +101,7 @@ export default function Search() {
       const timeoutId = setTimeout(fetchSearchResults, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [searchQuery, selectedMediaType]);
+  });
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchQuery = e.target.value;
