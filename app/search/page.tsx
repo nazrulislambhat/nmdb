@@ -42,19 +42,37 @@ export default function Search() {
       const endpoint =
         mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
       const searchData = await fetchData(endpoint, query, 1, false);
+
       console.log(searchData);
+
       if (searchData) {
         const totalResults = searchData.total_results;
-        const items = searchData.results.map((result: any) => ({
-          name: result.name || result.title,
-          backdropPath: result.backdrop_path,
-          release_date: result.release_date || result.first_air_date,
-          first_air_date: result.first_air_date,
-          overview: result.overview,
-          profile_path: result.profile_path,
-          known_for: result.known_for,
-          known_for_department: result.known_for_department,
-        }));
+        let items = [];
+
+        if (mediaType === 'person') {
+          // Handle people data
+          items = searchData.results.map((result: any) => ({
+            name: result.name,
+            knownFor: result.known_for
+              .map((item: any) => item.title)
+              .join(', '),
+            knownForDepartment: result.known_for_department,
+            profilePath: result.profile_path,
+          }));
+        } else {
+          // Handle other media types data
+          items = searchData.results.map((result: any) => ({
+            name: result.name || result.title,
+            backdropPath: result.backdrop_path,
+            release_date: result.release_date || result.first_air_date,
+            first_air_date: result.first_air_date,
+            overview: result.overview,
+            profile_path: result.profile_path,
+            known_for: result.known_for,
+            known_for_department: result.known_for_department,
+          }));
+        }
+
         if (mediaType === selectedMediaType) {
           setCurrentItems(items);
         }
@@ -159,6 +177,38 @@ export default function Search() {
               </div>
             </div>
           ))}
+          {selectedMediaType === 'person' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="flex content-center gap-4">
+                <div className="cursor-pointer h-[70px] bg-gray-300 rounded-lg flex items-center justify-center">
+                  {item.profilePath ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${item.profilePath}`}
+                      alt={item.name}
+                      width={70}
+                      height={70}
+                      className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
+                    />
+                  ) : (
+                    <Image
+                      src={noPerson}
+                      alt={item.name}
+                      width={70}
+                      height={70}
+                      className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
+                    />
+                  )}
+                </div>
+                <div className="pr-2  pt-2">
+                  <p className="font-semibold text-base hover:text-gray-600 cursor-pointer">
+                    {item.name}
+                  </p>
+                  <p className="text-gray-900">
+                    {item.knownForDepartment} • {item.knownFor}
+                  </p>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
     </div>
