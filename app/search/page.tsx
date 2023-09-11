@@ -41,13 +41,11 @@ export default function Search() {
     const promises = Object.keys(mediaTypes).map(async (mediaType) => {
       const endpoint =
         mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
+
       const searchData = await fetchData(endpoint, query, 1, false);
-
       console.log(searchData);
-
       if (searchData) {
         const totalResults = searchData.total_results;
-        
         let items = [];
 
         if (mediaType === 'person') {
@@ -58,6 +56,7 @@ export default function Search() {
               .join(', '),
             knownForDepartment: result.known_for_department,
             profilePath: result.profile_path,
+            media_type: result.media_type,
           }));
         } else {
           items = searchData.results.map((result: any) => ({
@@ -84,7 +83,6 @@ export default function Search() {
     });
 
     const results = await Promise.all(promises);
-
     const newTotalResults: { [key: string]: number } = {};
     results.forEach((result) => {
       newTotalResults[result.mediaType] = result.totalResults;
@@ -145,38 +143,40 @@ export default function Search() {
           </ul>
         </div>
         <div className="selected-media-items flex gap-5 flex-col">
-          {currentItems.map((item, index) => (
-            <div key={index} className="shadow rounded-xl flex gap-4">
-              {item.backdropPath ? (
-                <Image
-                  src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
-                  alt={item.title}
-                  width={94}
-                  height={141}
-                  className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
-                />
-              ) : (
-                <div className="rounded-l-lg cursor-pointer h-[141px] bg-gray-300 flex items-center justify-center">
+          {selectedMediaType !== 'person' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="shadow rounded-xl flex gap-4">
+                {item.backdropPath ? (
                   <Image
-                    src={noImage}
+                    src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
                     alt={item.title}
                     width={94}
                     height={141}
                     className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
                   />
+                ) : (
+                  <div className="rounded-l-lg cursor-pointer h-[141px] bg-gray-300 flex items-center justify-center">
+                    <Image
+                      src={noImage}
+                      alt={item.title}
+                      width={94}
+                      height={141}
+                      className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
+                    />
+                  </div>
+                )}
+                <div className="pt-4 pr-2">
+                  <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
+                    {item.name}
+                  </p>
+                  <p className="text-gray-400 pb-4">{item.release_date}</p>
+                  <p className="text-clip overflow-hidden max-h-[2.8em]">
+                    {item.overview}
+                  </p>
                 </div>
-              )}
-              <div className="py-4 pr-2">
-                <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
-                  {item.name} {item.media_type}
-                </p>
-                <p className="text-gray-400 pb-4">{item.release_date}</p>
-                <p className="text-clip overflow-hidden max-h-[2.8em]">
-                  {item.overview}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+
           {selectedMediaType === 'person' &&
             currentItems.map((item, index) => (
               <div key={index} className="flex content-center gap-4">
@@ -199,11 +199,11 @@ export default function Search() {
                     />
                   )}
                 </div>
-                <div className="pr-2  pt-2">
+                <div className="pr-2 pt-2">
                   <p className="font-semibold text-base hover:text-gray-600 cursor-pointer">
                     {item.name}
                   </p>
-                  <p className="text-gray-900">
+                  <p className="text-gray-900 text-sm">
                     {item.knownForDepartment} • {item.knownFor}
                   </p>
                 </div>
