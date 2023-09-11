@@ -255,7 +255,7 @@ export default function Search() {
       <Pagination
         defaultCurrent={currentPage}
         total={totalPages * 10}
-        className="text-center"
+        className="text-center bg-red-500 rounded-md border-2 border-black py-4"
       />
     </div>
   );
