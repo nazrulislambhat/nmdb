@@ -58,6 +58,12 @@ export default function Search() {
             profilePath: result.profile_path,
             media_type: result.media_type,
           }));
+        } else if (mediaType === 'company') {
+          items = searchData.results.map((result: any) => ({
+            name: result.name || result.title,
+            origin_country: result.origin_country,
+            logoPath: result.logo_path,
+          }));
         } else {
           items = searchData.results.map((result: any) => ({
             name: result.name || result.title,
@@ -142,10 +148,11 @@ export default function Search() {
             ))}
           </ul>
         </div>
-        <div className="selected-media-items flex gap-5 flex-col">
+        <div className="selected-media-items flex flex-col">
           {selectedMediaType !== 'person' &&
+            selectedMediaType !== 'company' &&
             currentItems.map((item, index) => (
-              <div key={index} className="shadow rounded-xl flex gap-4">
+              <div key={index} className="shadow mb-4 rounded-xl flex gap-4">
                 {item.backdropPath ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
@@ -179,7 +186,7 @@ export default function Search() {
 
           {selectedMediaType === 'person' &&
             currentItems.map((item, index) => (
-              <div key={index} className="flex content-center gap-4">
+              <div key={index} className="flex content-center mb-4 gap-4">
                 <div className="cursor-pointer h-[70px] bg-gray-300 rounded-lg flex items-center justify-center">
                   {item.profilePath ? (
                     <Image
@@ -207,6 +214,34 @@ export default function Search() {
                     {item.knownForDepartment} • {item.knownFor}
                   </p>
                 </div>
+              </div>
+            ))}
+          {selectedMediaType === 'company' &&
+            currentItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex content-center items-center	w-[50vw] border-b-[1px] py-2 border-black"
+              >
+                <div className="cursor-pointer">
+                  {item.logoPath ? (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${item.logoPath}`}
+                      alt={item.name}
+                      width={100}
+                      height={40}
+                      className="cursor-pointer min-h-[40px] max-h-[40px] min-w-[40px] max-w-[40px]"
+                    />
+                  ) : (
+                    <p>{item.name}</p>
+                  )}
+                </div>
+                {item.origin_country && (
+                  <div className="">
+                    <span className="ml-2 text-white font-base text-xs bg-gray-300 px-[10px] py-[2px] rounded-md w-fit">
+                      {item.origin_country}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
         </div>
