@@ -45,7 +45,7 @@ export default function Search() {
       const endpoint =
         mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
 
-      const searchData = await fetchData(endpoint, query, 1, false);
+      const searchData = await fetchData(endpoint, query, currentPage, false);
       console.log(searchData);
       if (searchData) {
         const totalResults = searchData.total_results;
@@ -107,8 +107,7 @@ export default function Search() {
       const timeoutId = setTimeout(fetchSearchResults, 500);
       return () => clearTimeout(timeoutId);
     }
-  });
-
+  }, [searchQuery, currentPage]);
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchQuery = e.target.value;
     setSearchQuery(newSearchQuery);
@@ -117,6 +116,10 @@ export default function Search() {
   };
 
   const mediaTypeKeys = Object.keys(mediaTypes);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="mx-auto max-w-[1440px] min-h-screen">
@@ -143,7 +146,7 @@ export default function Search() {
                 } hover:font-bold hover:bg-gray-200`}
                 onClick={() => {
                   setSelectedMediaType(mediaType);
-                  fetchSearchResults();
+                  handlePageChange(1);
                 }}
               >
                 {mediaTypes[mediaType as keyof typeof mediaTypes].label}
@@ -222,6 +225,7 @@ export default function Search() {
                 </div>
               </div>
             ))}
+
           {selectedMediaType === 'company' &&
             currentItems.map((item, index) => (
               <div
@@ -253,9 +257,10 @@ export default function Search() {
         </div>
       </div>
       <Pagination
-        defaultCurrent={currentPage}
+        current={currentPage}
+        onChange={handlePageChange}
         total={totalPages * 10}
-        className="text-center bg-red-500 rounded-md border-2 border-black py-4"
+        className="text-center"
       />
     </div>
   );
