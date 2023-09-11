@@ -47,10 +47,10 @@ export default function Search() {
 
       if (searchData) {
         const totalResults = searchData.total_results;
+        
         let items = [];
 
         if (mediaType === 'person') {
-          // Handle people data
           items = searchData.results.map((result: any) => ({
             name: result.name,
             knownFor: result.known_for
@@ -60,9 +60,9 @@ export default function Search() {
             profilePath: result.profile_path,
           }));
         } else {
-          // Handle other media types data
           items = searchData.results.map((result: any) => ({
             name: result.name || result.title,
+            media_type: result.media_type,
             backdropPath: result.backdrop_path,
             release_date: result.release_date || result.first_air_date,
             first_air_date: result.first_air_date,
@@ -168,7 +168,7 @@ export default function Search() {
               )}
               <div className="py-4 pr-2">
                 <p className="font-semibold text-xl hover:text-gray-600 cursor-pointer">
-                  {item.name}
+                  {item.name} {item.media_type}
                 </p>
                 <p className="text-gray-400 pb-4">{item.release_date}</p>
                 <p className="text-clip overflow-hidden max-h-[2.8em]">
