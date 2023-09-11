@@ -83,7 +83,6 @@ export default function Search() {
 
         if (mediaType === selectedMediaType) {
           setCurrentItems(items);
-
           const itemsPerPage = 20;
           const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
           setTotalPages(calculatedTotalPages);
