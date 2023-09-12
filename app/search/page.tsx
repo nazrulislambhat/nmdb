@@ -46,7 +46,8 @@ export default function Search() {
         mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
 
       const searchData = await fetchData(endpoint, query, currentPage, false);
-      console.log(searchData);
+      console.log(endpoint);
+      // console.log(searchData);
       if (searchData) {
         const totalResults = searchData.total_results;
         let items = [];
@@ -165,7 +166,7 @@ export default function Search() {
                 {item.backdropPath ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
-                    alt={item.title}
+                    alt="Poster"
                     width={94}
                     height={141}
                     className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
@@ -174,7 +175,7 @@ export default function Search() {
                   <div className="rounded-l-lg cursor-pointer h-[141px] bg-gray-300 flex items-center justify-center">
                     <Image
                       src={noImage}
-                      alt={item.title}
+                      alt=" No Poster"
                       width={94}
                       height={141}
                       className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
@@ -200,7 +201,7 @@ export default function Search() {
                   {item.profilePath ? (
                     <Image
                       src={`https://image.tmdb.org/t/p/w500${item.profilePath}`}
-                      alt={item.name}
+                      alt="Person Photo"
                       width={70}
                       height={70}
                       className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
@@ -208,7 +209,7 @@ export default function Search() {
                   ) : (
                     <Image
                       src={noPerson}
-                      alt={item.name}
+                      alt="Person No Photo"
                       width={70}
                       height={70}
                       className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
