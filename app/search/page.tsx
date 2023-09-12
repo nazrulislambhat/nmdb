@@ -38,76 +38,68 @@ export default function Search() {
 
   const router = useRouter();
 
-  const fetchSearchResults = async () => {
+  const fetchSearchResults = async (mediaTypeToLoad = 'movie') => {
     const query = encodeURIComponent(searchQuery);
 
-    const promises = Object.keys(mediaTypes).map(async (mediaType) => {
-      const endpoint =
-        mediaTypes[mediaType as keyof typeof mediaTypes].endpoint;
+    const endpoint = (mediaTypes as Record<string, { endpoint: string }>)[
+      mediaTypeToLoad
+    ].endpoint;
 
-      const searchData = await fetchData(endpoint, query, currentPage, false);
-      console.log(searchData);
-      if (searchData) {
-        const totalResults = searchData.total_results;
-        let items = [];
+    const searchData = await fetchData(endpoint, query, currentPage, false);
 
-        if (mediaType === 'person') {
-          items = searchData.results.map((result: any) => ({
-            name: result.name,
-            knownFor: result.known_for
-              .map((item: any) => item.title)
-              .join(', '),
-            knownForDepartment: result.known_for_department,
-            profilePath: result.profile_path,
-            media_type: result.media_type,
-          }));
-        } else if (mediaType === 'company') {
-          items = searchData.results.map((result: any) => ({
-            name: result.name || result.title,
-            origin_country: result.origin_country,
-            logoPath: result.logo_path,
-          }));
-        } else {
-          items = searchData.results.map((result: any) => ({
-            name: result.name || result.title,
-            media_type: result.media_type,
-            backdropPath: result.backdrop_path,
-            release_date: result.release_date || result.first_air_date,
-            first_air_date: result.first_air_date,
-            overview: result.overview,
-            profile_path: result.profile_path,
-            known_for: result.known_for,
-            known_for_department: result.known_for_department,
-          }));
-        }
+    if (searchData) {
+      const totalResults = searchData.total_results;
 
-        if (mediaType === selectedMediaType) {
-          setCurrentItems(items);
-          const itemsPerPage = 20;
-          const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
-          setTotalPages(calculatedTotalPages);
-        }
+      let items = [];
 
-        return { mediaType, totalResults };
+      if (mediaTypeToLoad === 'person') {
+        items = searchData.results.map((result: any) => ({
+          name: result.name,
+          knownFor: result.known_for.map((item: any) => item.title).join(', '),
+          knownForDepartment: result.known_for_department,
+          profilePath: result.profile_path,
+          media_type: result.media_type,
+        }));
+      } else if (mediaTypeToLoad === 'company') {
+        items = searchData.results.map((result: any) => ({
+          name: result.name || result.title,
+          origin_country: result.origin_country,
+          logoPath: result.logo_path,
+        }));
       } else {
-        return { mediaType, totalResults: 0 };
+        items = searchData.results.map((result: any) => ({
+          name: result.name || result.title,
+          media_type: result.media_type,
+          backdropPath: result.backdrop_path,
+          release_date: result.release_date || result.first_air_date,
+          first_air_date: result.first_air_date,
+          overview: result.overview,
+          profile_path: result.profile_path,
+          known_for: result.known_for,
+          known_for_department: result.known_for_department,
+        }));
       }
-    });
+      const newTotalResults = { ...totalResults };
+      newTotalResults[mediaTypeToLoad] = totalResults;
+      setTotalResults(newTotalResults);
 
-    const results = await Promise.all(promises);
-    const newTotalResults: { [key: string]: number } = {};
-    results.forEach((result) => {
-      newTotalResults[result.mediaType] = result.totalResults;
-    });
-    setTotalResults(newTotalResults);
+      setCurrentItems(items);
+      const itemsPerPage = 20;
+      const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
+      setTotalPages(calculatedTotalPages);
+    }
   };
 
   useEffect(() => {
     if (searchQuery) {
-      const timeoutId = setTimeout(fetchSearchResults, 500);
+      const timeoutId = setTimeout(
+        () => fetchSearchResults(selectedMediaType),
+        500
+      );
       return () => clearTimeout(timeoutId);
     }
-  }, [searchQuery, currentPage]);
+  }, [searchQuery, currentPage, selectedMediaType]);
+
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchQuery = e.target.value;
     setSearchQuery(newSearchQuery);
@@ -119,6 +111,12 @@ export default function Search() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleMediaTypeSelection = (mediaType: string) => {
+    setSelectedMediaType(mediaType);
+    setCurrentPage(1);
+    fetchSearchResults(mediaType);
   };
 
   return (
@@ -144,10 +142,7 @@ export default function Search() {
                 className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
                   selectedMediaType === mediaType ? 'selected' : ''
                 } hover:font-bold hover:bg-gray-200`}
-                onClick={() => {
-                  setSelectedMediaType(mediaType);
-                  handlePageChange(1);
-                }}
+                onClick={() => handleMediaTypeSelection(mediaType)}
               >
                 {mediaTypes[mediaType as keyof typeof mediaTypes].label}
                 <span className="bg-gray-200 flex justify-center content-center items-center w-max rounded-xl text-gray-700 px-2 py-1">
@@ -165,7 +160,7 @@ export default function Search() {
                 {item.backdropPath ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${item.backdropPath}`}
-                    alt={item.title}
+                    alt="Poster"
                     width={94}
                     height={141}
                     className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
@@ -174,7 +169,7 @@ export default function Search() {
                   <div className="rounded-l-lg cursor-pointer h-[141px] bg-gray-300 flex items-center justify-center">
                     <Image
                       src={noImage}
-                      alt={item.title}
+                      alt=" No Poster"
                       width={94}
                       height={141}
                       className="rounded-l-lg cursor-pointer min-w-[94px] h-[141px]"
@@ -200,7 +195,7 @@ export default function Search() {
                   {item.profilePath ? (
                     <Image
                       src={`https://image.tmdb.org/t/p/w500${item.profilePath}`}
-                      alt={item.name}
+                      alt="Person Photo"
                       width={70}
                       height={70}
                       className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
@@ -208,7 +203,7 @@ export default function Search() {
                   ) : (
                     <Image
                       src={noPerson}
-                      alt={item.name}
+                      alt="Person No Photo"
                       width={70}
                       height={70}
                       className="rounded-lg cursor-pointer min-w-[70px] h-[70px]"
