@@ -72,7 +72,7 @@ export default function Popular() {
   }, []);
 
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+    
   };
 
   return (
