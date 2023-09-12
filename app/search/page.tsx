@@ -40,6 +40,26 @@ export default function Search() {
 
   const fetchSearchResults = async (mediaTypeToLoad = 'movie') => {
     const query = encodeURIComponent(searchQuery);
+    const totalCounts = await Promise.all(
+      Object.values(mediaTypes).map(async (mediaType) => {
+        const endpoint = mediaType.endpoint;
+        const searchData = await fetchData(endpoint, query, 1, true);
+        console.log(searchData);
+        return {
+          mediaType: endpoint.split('/')[1],
+          count: searchData.total_results,
+        };
+      })
+    );
+    const newTotalResults: { [key: string]: number } = totalCounts.reduce(
+      (acc, { mediaType, count }) => {
+        acc[mediaType] = count;
+        return acc;
+      },
+      {} as { [key: string]: number }
+    );
+
+    setTotalResults(newTotalResults);
 
     const endpoint = (mediaTypes as Record<string, { endpoint: string }>)[
       mediaTypeToLoad
@@ -48,10 +68,12 @@ export default function Search() {
     const searchData = await fetchData(endpoint, query, currentPage, false);
 
     if (searchData) {
-      const totalResults = searchData.total_results;
-
+      const itemsPerPage = 20;
+      const calculatedTotalPages = Math.ceil(
+        searchData.total_results / itemsPerPage
+      );
+      setTotalPages(calculatedTotalPages);
       let items = [];
-
       if (mediaTypeToLoad === 'person') {
         items = searchData.results.map((result: any) => ({
           name: result.name,
@@ -79,24 +101,13 @@ export default function Search() {
           known_for_department: result.known_for_department,
         }));
       }
-      const newTotalResults = { ...totalResults };
-      newTotalResults[mediaTypeToLoad] = totalResults;
-      setTotalResults(newTotalResults);
-
       setCurrentItems(items);
-      const itemsPerPage = 20;
-      const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
-      setTotalPages(calculatedTotalPages);
     }
   };
 
   useEffect(() => {
     if (searchQuery) {
-      const timeoutId = setTimeout(
-        () => fetchSearchResults(selectedMediaType),
-        500
-      );
-      return () => clearTimeout(timeoutId);
+      fetchSearchResults(selectedMediaType);
     }
   }, [searchQuery, currentPage, selectedMediaType]);
 
@@ -111,6 +122,7 @@ export default function Search() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchSearchResults(selectedMediaType);
   };
 
   const handleMediaTypeSelection = (mediaType: string) => {
