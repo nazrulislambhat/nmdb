@@ -40,6 +40,25 @@ export default function Search() {
 
   const fetchSearchResults = async (mediaTypeToLoad = 'movie') => {
     const query = encodeURIComponent(searchQuery);
+    const totalCounts = await Promise.all(
+      Object.values(mediaTypes).map(async (mediaType) => {
+        const endpoint = mediaType.endpoint;
+        const searchData = await fetchData(endpoint, query, 1, true);
+        return {
+          mediaType: endpoint.split('/')[1],
+          count: searchData.total_results,
+        };
+      })
+    );
+    const newTotalResults: { [key: string]: number } = totalCounts.reduce(
+      (acc, { mediaType, count }) => {
+        acc[mediaType] = count;
+        return acc;
+      },
+      {} as { [key: string]: number }
+    );
+
+    setTotalResults(newTotalResults);
 
     const endpoint = (mediaTypes as Record<string, { endpoint: string }>)[
       mediaTypeToLoad
@@ -48,10 +67,12 @@ export default function Search() {
     const searchData = await fetchData(endpoint, query, currentPage, false);
 
     if (searchData) {
-      const totalResults = searchData.total_results;
-
+      const itemsPerPage = 20;
+      const calculatedTotalPages = Math.ceil(
+        searchData.total_results / itemsPerPage
+      );
+      setTotalPages(calculatedTotalPages);
       let items = [];
-
       if (mediaTypeToLoad === 'person') {
         items = searchData.results.map((result: any) => ({
           name: result.name,
@@ -79,24 +100,13 @@ export default function Search() {
           known_for_department: result.known_for_department,
         }));
       }
-      const newTotalResults = { ...totalResults };
-      newTotalResults[mediaTypeToLoad] = totalResults;
-      setTotalResults(newTotalResults);
-
       setCurrentItems(items);
-      const itemsPerPage = 20;
-      const calculatedTotalPages = Math.ceil(totalResults / itemsPerPage);
-      setTotalPages(calculatedTotalPages);
     }
   };
 
   useEffect(() => {
     if (searchQuery) {
-      const timeoutId = setTimeout(
-        () => fetchSearchResults(selectedMediaType),
-        500
-      );
-      return () => clearTimeout(timeoutId);
+      fetchSearchResults(selectedMediaType);
     }
   }, [searchQuery, currentPage, selectedMediaType]);
 
@@ -111,6 +121,7 @@ export default function Search() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchSearchResults(selectedMediaType);
   };
 
   const handleMediaTypeSelection = (mediaType: string) => {
@@ -131,7 +142,7 @@ export default function Search() {
         />
       </div>
       <div className="search-result flex gap-2 my-16">
-        <div className="result-filter shadow rounded-lg min-w-[300px] max-h-[370px] mr-4">
+        <div className="result-filter shadow rounded-lg min-w-[250px] max-h-[370px] mr-4">
           <h2 className="bg-mainColor px-5 py-5 text-white rounded-t-lg font-base text-xl">
             Search Results
           </h2>
@@ -139,7 +150,7 @@ export default function Search() {
             {mediaTypeKeys.map((mediaType) => (
               <li
                 key={mediaType}
-                className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
+                className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 text-sm ${
                   selectedMediaType === mediaType ? 'selected' : ''
                 } hover:font-bold hover:bg-gray-200`}
                 onClick={() => handleMediaTypeSelection(mediaType)}
@@ -155,6 +166,7 @@ export default function Search() {
         <div className="selected-media-items flex flex-col">
           {selectedMediaType !== 'person' &&
             selectedMediaType !== 'company' &&
+            selectedMediaType !== 'keyword' &&
             currentItems.map((item, index) => (
               <div key={index} className="shadow mb-4 rounded-xl flex gap-4">
                 {item.backdropPath ? (
@@ -247,6 +259,14 @@ export default function Search() {
                     </span>
                   </div>
                 )}
+              </div>
+            ))}
+
+          {selectedMediaType === 'keyword' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="text-sm">
+                {' '}
+                <p>{item.name}</p>
               </div>
             ))}
         </div>
