@@ -44,7 +44,6 @@ export default function Search() {
       Object.values(mediaTypes).map(async (mediaType) => {
         const endpoint = mediaType.endpoint;
         const searchData = await fetchData(endpoint, query, 1, true);
-        console.log(searchData);
         return {
           mediaType: endpoint.split('/')[1],
           count: searchData.total_results,
