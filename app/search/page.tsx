@@ -143,7 +143,7 @@ export default function Search() {
         />
       </div>
       <div className="search-result flex gap-2 my-16">
-        <div className="result-filter shadow rounded-lg min-w-[300px] max-h-[370px] mr-4">
+        <div className="result-filter shadow rounded-lg min-w-[250px] max-h-[370px] mr-4">
           <h2 className="bg-mainColor px-5 py-5 text-white rounded-t-lg font-base text-xl">
             Search Results
           </h2>
@@ -151,7 +151,7 @@ export default function Search() {
             {mediaTypeKeys.map((mediaType) => (
               <li
                 key={mediaType}
-                className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 ${
+                className={`flex justify-between content-center items-center cursor-pointer px-4 py-1 text-sm ${
                   selectedMediaType === mediaType ? 'selected' : ''
                 } hover:font-bold hover:bg-gray-200`}
                 onClick={() => handleMediaTypeSelection(mediaType)}
@@ -167,6 +167,7 @@ export default function Search() {
         <div className="selected-media-items flex flex-col">
           {selectedMediaType !== 'person' &&
             selectedMediaType !== 'company' &&
+            selectedMediaType !== 'keyword' &&
             currentItems.map((item, index) => (
               <div key={index} className="shadow mb-4 rounded-xl flex gap-4">
                 {item.backdropPath ? (
@@ -259,6 +260,14 @@ export default function Search() {
                     </span>
                   </div>
                 )}
+              </div>
+            ))}
+
+          {selectedMediaType === 'keyword' &&
+            currentItems.map((item, index) => (
+              <div key={index} className="text-sm">
+                {' '}
+                <p>{item.name}</p>
               </div>
             ))}
         </div>
