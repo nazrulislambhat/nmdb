@@ -14,11 +14,16 @@ interface MediaItem {
 
 interface CardProps {
   media: MediaItem[];
+  customStyles?: boolean;
 }
 
-export default function Card({ media }: CardProps) {
+export default function Card({ media, customStyles }: CardProps) {
   return (
-    <div className="flex gap-4 overflow-x-auto">
+    <div
+      className={`flex ${
+        customStyles ? 'flex-wrap gap-4' : 'gap-4 overflow-x-auto'
+      } `}
+    >
       {media.map((item, index) => (
         <div
           key={index}
