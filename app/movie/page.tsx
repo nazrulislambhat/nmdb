@@ -26,43 +26,33 @@ export default function Movie() {
           const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
 
           if (!isDataStale) {
-            setMedia(data);
+            const movieData = data.filter((item: any) => item.isMovie);
+            setMedia(movieData);
             return;
           }
         }
-        const [movieData, tvData] = await Promise.all([
-          fetchData('discover/movie', sortBy),
-          fetchData('discover/tv', sortBy),
-        ]);
 
-        const combinedData: Movie[] = [
-          ...movieData.results.map((movie: any) => ({
+        const movieData = await fetchData('discover/movie', sortBy);
+        const filteredMovieData: Movie[] = movieData.results.map(
+          (movie: any) => ({
             title: movie.title,
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
             voteAverage: movie.vote_average,
             id: movie.id,
             isMovie: true,
-          })),
-          ...tvData.results.map((tvShow: any) => ({
-            title: tvShow.name,
-            releaseDate: tvShow.first_air_date,
-            posterPath: tvShow.poster_path,
-            voteAverage: tvShow.vote_average,
-            id: tvShow.id,
-            isMovie: false,
-          })),
-        ];
+          })
+        );
 
         localStorage.setItem(
           'cachedMediaData',
           JSON.stringify({
-            data: combinedData,
+            data: filteredMovieData,
             timestamp: new Date().getTime(),
           })
         );
 
-        setMedia(combinedData);
+        setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
       }
@@ -96,7 +86,7 @@ export default function Movie() {
               style={{ width: 220 }}
               onChange={handleChange}
               options={[
-                { value: 'popularity.desc', label: 'Popularity Decending' },
+                { value: 'popularity.desc', label: 'Popularity Descending' },
                 { value: 'popularity.asc', label: 'Popularity Ascending' },
               ]}
             />
