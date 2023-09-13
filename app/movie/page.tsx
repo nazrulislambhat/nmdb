@@ -13,7 +13,7 @@ interface Movie {
   isMovie: boolean;
 }
 
-export default function Popular() {
+export default function Movie() {
   const [media, setMedia] = useState<Movie[]>([]);
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
   useEffect(() => {
@@ -31,8 +31,8 @@ export default function Popular() {
           }
         }
         const [movieData, tvData] = await Promise.all([
-          fetchData('discover/movie'),
-          fetchData('discover/tv'),
+          fetchData('discover/movie', sortBy),
+          fetchData('discover/tv', sortBy),
         ]);
 
         const combinedData: Movie[] = [
@@ -69,7 +69,7 @@ export default function Popular() {
     }
 
     fetchMediaData();
-  }, []);
+  }, [sortBy]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -108,7 +108,7 @@ export default function Popular() {
       </div>
       <button
         onClick={handleSort}
-        className="w-[100vw] bg-mainColor  py-2 text-center mt-8 text-white font-base text-2xl fixed bottom-0 hover:bg-blue-950"
+        className="w-[100vw] bg-mainColor  py-2 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-blue-950"
       >
         Search
       </button>

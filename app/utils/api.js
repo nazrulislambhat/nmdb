@@ -7,6 +7,7 @@ async function fetchData(endpoint, query, page = 1, includeAdult = false) {
     include_adult: includeAdult,
     language: 'en-US',
     page: page,
+    sort_by: sortBy,
   });
 
   queryParams.append('query', query);
