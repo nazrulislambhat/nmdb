@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Button, Select } from 'antd';
+import { Select } from 'antd';
 
 interface Movie {
   title: string;
