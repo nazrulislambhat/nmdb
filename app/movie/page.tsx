@@ -10,6 +10,8 @@ interface Movie {
   posterPath: string;
   voteAverage: number;
   id: number;
+  voteCount: number;
+  popularity: number;
   isMovie: boolean;
 }
 
@@ -39,11 +41,13 @@ export default function Movie() {
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
             voteAverage: movie.vote_average,
+            voteCount: movie.vote_count,
+            popularity: movie.popularity,
             id: movie.id,
             isMovie: true,
           })
         );
-
+        console.log(filteredMovieData);
         localStorage.setItem(
           'cachedMediaData',
           JSON.stringify({
@@ -65,13 +69,47 @@ export default function Movie() {
     setSortBy(value);
   };
 
-  const handleSort = () => {
+  const handleSort = (sortBy: string) => {
     const sortedMedia = [...media];
-    if (sortBy === 'popularity.desc') {
-      sortedMedia.sort((a, b) => b.voteAverage - a.voteAverage);
-    } else if (sortBy === 'popularity.asc') {
-      sortedMedia.sort((a, b) => a.voteAverage - b.voteAverage);
+
+    switch (sortBy) {
+      case 'vote_average.desc':
+        sortedMedia.sort((a, b) => b.voteAverage - a.voteAverage);
+        break;
+      case 'vote_average.asc':
+        sortedMedia.sort((a, b) => a.voteAverage - b.voteAverage);
+        break;
+      case 'vote_count.desc':
+        sortedMedia.sort((a, b) => b.voteCount - a.voteCount);
+        break;
+      case 'vote_count.asc':
+        sortedMedia.sort((a, b) => a.voteCount - b.voteCount);
+        break;
+      case 'popularity.desc':
+        sortedMedia.sort((a, b) => b.popularity - a.popularity);
+        break;
+      case 'popularity.asc':
+        sortedMedia.sort((a, b) => a.popularity - b.popularity);
+        break;
+      case 'release_date.desc':
+        sortedMedia.sort(
+          (a, b) =>
+            new Date(b.releaseDate).getTime() -
+            new Date(a.releaseDate).getTime()
+        );
+        break;
+      case 'release_date.asc':
+        sortedMedia.sort(
+          (a, b) =>
+            new Date(a.releaseDate).getTime() -
+            new Date(b.releaseDate).getTime()
+        );
+        break;
+      default:
+        sortedMedia.sort((a, b) => b.voteAverage - a.voteAverage);
+        break;
     }
+
     setMedia(sortedMedia);
   };
 
@@ -86,8 +124,46 @@ export default function Movie() {
               style={{ width: 220 }}
               onChange={handleChange}
               options={[
-                { value: 'popularity.desc', label: 'Popularity Descending' },
-                { value: 'popularity.asc', label: 'Popularity Ascending' },
+                {
+                  value: 'popularity.asc',
+                  label: 'Popularity Ascending',
+                },
+                {
+                  value: 'popularity.desc',
+                  label: 'Popularity Descending',
+                },
+                {
+                  value: 'revenue.asc',
+                  label: 'Revenue Ascending',
+                },
+                {
+                  value: 'revenue.desc',
+                  label: 'Revenue Descending',
+                },
+                {
+                  value: 'primary_release_date.asc',
+                  label: 'Release Date Ascending',
+                },
+                {
+                  value: 'primary_release_date.desc',
+                  label: 'Release Date Descending',
+                },
+                {
+                  value: 'vote_average.asc',
+                  label: 'Vote Average Ascending',
+                },
+                {
+                  value: 'vote_average.desc',
+                  label: 'Vote Average Descending',
+                },
+                {
+                  value: 'vote_count.asc',
+                  label: 'Vote Count Ascending',
+                },
+                {
+                  value: 'vote_count.desc',
+                  label: 'Vote Count Descending',
+                },
               ]}
             />
           </div>
@@ -100,7 +176,7 @@ export default function Movie() {
         </div>
       </div>
       <button
-        onClick={handleSort}
+        onClick={() => handleSort(sortBy)}
         className="w-[100vw] bg-mainColor py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-sky-950"
       >
         Search
