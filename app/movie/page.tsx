@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select } from 'antd';
+import { Button, Select } from 'antd';
 
 interface Movie {
   title: string;
@@ -93,12 +93,15 @@ export default function Movie() {
           </div>
           <div className="card mt-8">
             <Card media={media} customStyles={true} />
+            <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
+              Load More
+            </button>
           </div>
         </div>
       </div>
       <button
         onClick={handleSort}
-        className="w-[100vw] bg-mainColor  py-2 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-blue-950"
+        className="w-[100vw] bg-mainColor py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-sky-950"
       >
         Search
       </button>
