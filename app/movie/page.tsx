@@ -134,11 +134,11 @@ export default function Movie() {
                 },
                 {
                   value: 'revenue.asc',
-                  label: 'Rating Ascending',
+                  label: 'Revenue Ascending',
                 },
                 {
                   value: 'revenue.desc',
-                  label: 'Rating Descending',
+                  label: 'Revenue Descending',
                 },
                 {
                   value: 'primary_release_date.asc',
