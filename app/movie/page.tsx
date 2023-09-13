@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 
 interface Movie {
   title: string;
@@ -15,7 +15,7 @@ interface Movie {
 
 export default function Popular() {
   const [media, setMedia] = useState<Movie[]>([]);
-
+  const [sortBy, setSortBy] = useState<string>('popularity.desc');
   useEffect(() => {
     async function fetchMediaData() {
       try {
@@ -72,28 +72,46 @@ export default function Popular() {
   }, []);
 
   const handleChange = (value: string) => {
-    
+    setSortBy(value);
+  };
+
+  const handleSort = () => {
+    const sortedMedia = [...media];
+    if (sortBy === 'popularity.desc') {
+      sortedMedia.sort((a, b) => b.voteAverage - a.voteAverage);
+    } else if (sortBy === 'popularity.asc') {
+      sortedMedia.sort((a, b) => a.voteAverage - b.voteAverage);
+    }
+    setMedia(sortedMedia);
   };
 
   return (
-    <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[80px]">
-      <div className="flex justify-start items-start gap-4 px-10">
-        <div className="sidebar min-w-[250px]">
-          <h2 className="font-bold text-xl pb-4">Popular Movies</h2>
-          <Select
-            defaultValue="popularity.desc"
-            style={{ width: 220 }}
-            onChange={handleChange}
-            options={[
-              { value: 'popularity.desc', label: 'Popularity Decending' },
-              { value: 'popularity.asc', label: 'Popularity Ascending' },
-            ]}
-          />
-        </div>
-        <div className="card">
-          <Card media={media} customStyles={true} />
+    <>
+      <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
+        <div className="flex justify-start items-start gap-8 px-10">
+          <div className="sidebar shadow min-h-screen rounded mt-8 p-4 min-w-[250px]">
+            <h2 className="font-bold text-xl pb-4">Popular Movies</h2>
+            <Select
+              defaultValue="popularity.desc"
+              style={{ width: 220 }}
+              onChange={handleChange}
+              options={[
+                { value: 'popularity.desc', label: 'Popularity Decending' },
+                { value: 'popularity.asc', label: 'Popularity Ascending' },
+              ]}
+            />
+          </div>
+          <div className="card mt-8">
+            <Card media={media} customStyles={true} />
+          </div>
         </div>
       </div>
-    </div>
+      <button
+        onClick={handleSort}
+        className="w-[100vw] bg-mainColor  py-2 text-center mt-8 text-white font-base text-2xl fixed bottom-0 hover:bg-blue-950"
+      >
+        Search
+      </button>
+    </>
   );
 }
