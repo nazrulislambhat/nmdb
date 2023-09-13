@@ -86,6 +86,8 @@ export default function Movie() {
               style={{ width: 220 }}
               onChange={handleChange}
               options={[
+                { value: 'popularity.desc', label: 'Popularity Descending' },
+                { value: 'popularity.asc', label: 'Popularity Ascending' },
                 {
                   value: 'popularity.asc',
                   label: 'Popularity Ascending',

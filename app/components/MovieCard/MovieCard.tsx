@@ -48,7 +48,7 @@ export default function Card({ media, customStyles }: CardProps) {
                 alt="No Image"
                 width={150}
                 height={225}
-                className="rounded-lg cursor-pointer h-[225px]"
+                className="rounded-lg cursor-pointer h-[225px] bg-gray-200"
               />
             )}
           </Link>
