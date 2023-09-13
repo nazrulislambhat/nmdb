@@ -26,43 +26,33 @@ export default function Movie() {
           const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
 
           if (!isDataStale) {
-            setMedia(data);
+            const movieData = data.filter((item: any) => item.isMovie);
+            setMedia(movieData);
             return;
           }
         }
-        const [movieData, tvData] = await Promise.all([
-          fetchData('discover/movie', sortBy),
-          fetchData('discover/tv', sortBy),
-        ]);
 
-        const combinedData: Movie[] = [
-          ...movieData.results.map((movie: any) => ({
+        const movieData = await fetchData('discover/movie', sortBy);
+        const filteredMovieData: Movie[] = movieData.results.map(
+          (movie: any) => ({
             title: movie.title,
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
             voteAverage: movie.vote_average,
             id: movie.id,
             isMovie: true,
-          })),
-          ...tvData.results.map((tvShow: any) => ({
-            title: tvShow.name,
-            releaseDate: tvShow.first_air_date,
-            posterPath: tvShow.poster_path,
-            voteAverage: tvShow.vote_average,
-            id: tvShow.id,
-            isMovie: false,
-          })),
-        ];
+          })
+        );
 
         localStorage.setItem(
           'cachedMediaData',
           JSON.stringify({
-            data: combinedData,
+            data: filteredMovieData,
             timestamp: new Date().getTime(),
           })
         );
 
-        setMedia(combinedData);
+        setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
       }
@@ -96,19 +86,22 @@ export default function Movie() {
               style={{ width: 220 }}
               onChange={handleChange}
               options={[
-                { value: 'popularity.desc', label: 'Popularity Decending' },
+                { value: 'popularity.desc', label: 'Popularity Descending' },
                 { value: 'popularity.asc', label: 'Popularity Ascending' },
               ]}
             />
           </div>
           <div className="card mt-8">
             <Card media={media} customStyles={true} />
+            <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
+              Load More
+            </button>
           </div>
         </div>
       </div>
       <button
         onClick={handleSort}
-        className="w-[100vw] bg-mainColor  py-2 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-blue-950"
+        className="w-[100vw] bg-mainColor py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-sky-950"
       >
         Search
       </button>
