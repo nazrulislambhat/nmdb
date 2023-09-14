@@ -23,11 +23,30 @@ const dateFormat = 'M/D/YYYY';
 export default function Movie() {
   const [media, setMedia] = useState<Movie[]>([]);
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
+  const [fromDate, setFromDate] = useState<string | null>(null);
+  const [toDate, setToDate] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const movieData = await fetchData('discover/movie', sortBy);
+        let releaseDateRange = '';
+
+        if (fromDate && toDate) {
+          releaseDateRange = `${dayjs(fromDate, dateFormat).format(
+            'YYYY-MM-DD'
+          )}|${dayjs(toDate, dateFormat).format('YYYY-MM-DD')}`;
+        } else {
+          releaseDateRange = `|${dayjs().format('YYYY-MM-DD')}`;
+          setSortBy('release_date.desc');
+        }
+
+        const movieData = await fetchData(
+          'discover/movie',
+          sortBy,
+          1,
+          false,
+          releaseDateRange
+        );
         const filteredMovieData: Movie[] = movieData.results.map(
           (movie: any) => ({
             title: movie.title,
@@ -47,7 +66,7 @@ export default function Movie() {
     }
 
     fetchMediaData();
-  }, [sortBy]);
+  }, [sortBy, fromDate, toDate]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -156,11 +175,23 @@ export default function Movie() {
               <p className="text-lg text-gray-600 mb-2">Release Dates</p>
               <span className="flex justify-between items-center text-gray-400 mb-4">
                 from
-                <DatePicker format={dateFormat} />
+                <DatePicker
+                  format={dateFormat}
+                  value={fromDate ? dayjs(fromDate, dateFormat) : null}
+                  onChange={(date) =>
+                    setFromDate(date ? date.format(dateFormat) : null)
+                  }
+                />
               </span>
               <span className="flex justify-between items-center text-gray-400">
                 to
-                <DatePicker format={dateFormat} />
+                <DatePicker
+                  format={dateFormat}
+                  value={toDate ? dayjs(toDate, dateFormat) : null}
+                  onChange={(date) =>
+                    setToDate(date ? date.format(dateFormat) : null)
+                  }
+                />
               </span>
             </div>
           </div>
