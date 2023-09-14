@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchData } from '../../utils/api';
 import Card from '../MovieCard/MovieCard';
+
 interface Movie {
   title: string;
   releaseDate: string;
@@ -17,6 +18,11 @@ export default function WhatsPopular() {
   useEffect(() => {
     async function fetchMediaData() {
       try {
+        // Calculate the date range: one month before the current date
+        const currentDate = new Date();
+        const lastMonth = new Date(currentDate);
+        lastMonth.setMonth(currentDate.getMonth() - 1);
+
         const cachedData = localStorage.getItem('cachedMediaData');
         if (cachedData) {
           const { data, timestamp } = JSON.parse(cachedData);
@@ -29,8 +35,20 @@ export default function WhatsPopular() {
           }
         }
         const [movieData, tvData] = await Promise.all([
-          fetchData('discover/movie'),
-          fetchData('discover/tv'),
+          fetchData(
+            'discover/movie',
+            '',
+            1,
+            false,
+            `${lastMonth.toISOString()}|${currentDate.toISOString()}`
+          ),
+          fetchData(
+            'discover/tv',
+            '',
+            1,
+            false,
+            `${lastMonth.toISOString()}|${currentDate.toISOString()}`
+          ),
         ]);
 
         const combinedData: Movie[] = [
