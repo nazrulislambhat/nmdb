@@ -5,6 +5,7 @@ import Card from '../components/MovieCard/MovieCard';
 import { Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 interface Movie {
   title: string;
   releaseDate: string;
@@ -15,28 +16,17 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+
 dayjs.extend(customParseFormat);
 const dateFormat = 'M/D/YYYY';
 
 export default function Movie() {
   const [media, setMedia] = useState<Movie[]>([]);
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
+
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const cachedData = localStorage.getItem('cachedMediaData');
-        if (cachedData) {
-          const { data, timestamp } = JSON.parse(cachedData);
-          const currentTime = new Date().getTime();
-          const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
-
-          if (!isDataStale) {
-            const movieData = data.filter((item: any) => item.isMovie);
-            setMedia(movieData);
-            return;
-          }
-        }
-
         const movieData = await fetchData('discover/movie', sortBy);
         const filteredMovieData: Movie[] = movieData.results.map(
           (movie: any) => ({
@@ -50,15 +40,6 @@ export default function Movie() {
             isMovie: true,
           })
         );
-        console.log(filteredMovieData);
-        localStorage.setItem(
-          'cachedMediaData',
-          JSON.stringify({
-            data: filteredMovieData,
-            timestamp: new Date().getTime(),
-          })
-        );
-
         setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
