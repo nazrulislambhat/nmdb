@@ -2,7 +2,9 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select } from 'antd';
+import { Select, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 interface Movie {
   title: string;
@@ -15,26 +17,36 @@ interface Movie {
   isMovie: boolean;
 }
 
+dayjs.extend(customParseFormat);
+const dateFormat = 'M/D/YYYY';
+
 export default function Movie() {
   const [media, setMedia] = useState<Movie[]>([]);
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
+  const [fromDate, setFromDate] = useState<string | null>(null);
+  const [toDate, setToDate] = useState<string | null>(null);
+
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const cachedData = localStorage.getItem('cachedMediaData');
-        if (cachedData) {
-          const { data, timestamp } = JSON.parse(cachedData);
-          const currentTime = new Date().getTime();
-          const isDataStale = currentTime - timestamp > 24 * 60 * 60 * 1000;
+        let releaseDateRange = '';
 
-          if (!isDataStale) {
-            const movieData = data.filter((item: any) => item.isMovie);
-            setMedia(movieData);
-            return;
-          }
+        if (fromDate && toDate) {
+          releaseDateRange = `${dayjs(fromDate, dateFormat).format(
+            'YYYY-MM-DD'
+          )}|${dayjs(toDate, dateFormat).format('YYYY-MM-DD')}`;
+        } else {
+          releaseDateRange = `|${dayjs().format('YYYY-MM-DD')}`;
+          setSortBy('release_date.desc');
         }
 
-        const movieData = await fetchData('discover/movie', sortBy);
+        const movieData = await fetchData(
+          'discover/movie',
+          sortBy,
+          1,
+          false,
+          releaseDateRange
+        );
         const filteredMovieData: Movie[] = movieData.results.map(
           (movie: any) => ({
             title: movie.title,
@@ -47,15 +59,6 @@ export default function Movie() {
             isMovie: true,
           })
         );
-        console.log(filteredMovieData);
-        localStorage.setItem(
-          'cachedMediaData',
-          JSON.stringify({
-            data: filteredMovieData,
-            timestamp: new Date().getTime(),
-          })
-        );
-
         setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
@@ -63,7 +66,7 @@ export default function Movie() {
     }
 
     fetchMediaData();
-  }, [sortBy]);
+  }, [sortBy, fromDate, toDate]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -118,10 +121,11 @@ export default function Movie() {
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
         <div className="flex justify-start items-start gap-8 px-10">
           <div className="sidebar shadow min-h-screen rounded mt-8 p-4 min-w-[250px]">
-            <h2 className="font-bold text-xl pb-4">Popular Movies</h2>
+            <h2 className="font-bold text-xl mb-4">Popular Movies</h2>
             <Select
               defaultValue="popularity.desc"
               style={{ width: 220 }}
+              className="mb-4"
               onChange={handleChange}
               options={[
                 {
@@ -166,6 +170,30 @@ export default function Movie() {
                 },
               ]}
             />
+
+            <div className="flex flex-col">
+              <p className="text-lg text-gray-600 mb-2">Release Dates</p>
+              <span className="flex justify-between items-center text-gray-400 mb-4">
+                from
+                <DatePicker
+                  format={dateFormat}
+                  value={fromDate ? dayjs(fromDate, dateFormat) : null}
+                  onChange={(date) =>
+                    setFromDate(date ? date.format(dateFormat) : null)
+                  }
+                />
+              </span>
+              <span className="flex justify-between items-center text-gray-400">
+                to
+                <DatePicker
+                  format={dateFormat}
+                  value={toDate ? dayjs(toDate, dateFormat) : null}
+                  onChange={(date) =>
+                    setToDate(date ? date.format(dateFormat) : null)
+                  }
+                />
+              </span>
+            </div>
           </div>
           <div className="card mt-8">
             <Card media={media} customStyles={true} />

@@ -24,24 +24,40 @@ interface Filter {
   value: string;
 }
 
-export default function TopMovies() {
+export default function LatestTrailers() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [tvShows, setTVShows] = useState<TVShow[]>([]);
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('streaming');
 
   useEffect(() => {
-    fetchTopMovies();
-    fetchTopTVShows();
+    fetchLatestTrailers();
   }, []);
 
-  const fetchTopMovies = async () => {
+  const fetchLatestTrailers = async () => {
     try {
+      // Calculate the date range: one month before the current date
       const currentDate = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 4);
+      const lastMonth = new Date(currentDate);
+      lastMonth.setMonth(currentDate.getMonth() - 1);
 
-      const movieData = await fetchData('/discover/movie');
+      // Fetch movies and TV shows with the default date range
+      const movieData = await fetchData(
+        '/discover/movie',
+        '',
+        1,
+        false,
+        `${lastMonth.toISOString()}|${currentDate.toISOString()}`
+      );
+      const tvData = await fetchData(
+        '/discover/tv',
+        '',
+        1,
+        false,
+        `${lastMonth.toISOString()}|${currentDate.toISOString()}`
+      );
+
+      // Filter and process movie data
       const filteredMovies = movieData.results
         .filter((movie: any) => {
           const releaseDate = new Date(movie.release_date);
@@ -71,19 +87,7 @@ export default function TopMovies() {
         (movie: Movie | null) => movie !== null
       );
 
-      setMovies(filteredMovieResults);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const fetchTopTVShows = async () => {
-    try {
-      const currentDate = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(currentDate.getMonth() - 3);
-
-      const tvData = await fetchData('/discover/tv');
+      // Filter and process TV show data
       const filteredTVShows = tvData.results.map(async (tvShow: any) => {
         const trailersResponse = await fetchData(`/tv/${tvShow.id}/videos`);
 
@@ -108,9 +112,11 @@ export default function TopMovies() {
         (tvShow: TVShow | null) => tvShow !== null
       );
 
+      // Set the fetched data to state
+      setMovies(filteredMovieResults);
       setTVShows(filteredTVShowResults);
     } catch (error) {
-      console.error('Error fetching TV data:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
