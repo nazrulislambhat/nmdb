@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select } from 'antd';
-
+import { Select, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 interface Movie {
   title: string;
   releaseDate: string;
@@ -14,6 +15,8 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+dayjs.extend(customParseFormat);
+const dateFormat = 'M/D/YYYY';
 
 export default function Movie() {
   const [media, setMedia] = useState<Movie[]>([]);
@@ -118,10 +121,11 @@ export default function Movie() {
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
         <div className="flex justify-start items-start gap-8 px-10">
           <div className="sidebar shadow min-h-screen rounded mt-8 p-4 min-w-[250px]">
-            <h2 className="font-bold text-xl pb-4">Popular Movies</h2>
+            <h2 className="font-bold text-xl mb-4">Popular Movies</h2>
             <Select
               defaultValue="popularity.desc"
               style={{ width: 220 }}
+              className="mb-4"
               onChange={handleChange}
               options={[
                 {
@@ -166,6 +170,18 @@ export default function Movie() {
                 },
               ]}
             />
+
+            <div className="flex flex-col">
+              <p className="text-lg text-gray-600 mb-2">Release Dates</p>
+              <span className="flex justify-between items-center text-gray-400 mb-4">
+                from
+                <DatePicker format={dateFormat} />
+              </span>
+              <span className="flex justify-between items-center text-gray-400">
+                to
+                <DatePicker format={dateFormat} />
+              </span>
+            </div>
           </div>
           <div className="card mt-8">
             <Card media={media} customStyles={true} />
