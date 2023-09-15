@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select, DatePicker } from 'antd';
+import { Select, DatePicker, Space, Tag } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -16,6 +16,30 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+const { CheckableTag } = Tag;
+
+const tagsData = [
+  'Action',
+  'Adventure',
+  'Animation',
+  'Comedy',
+  'Crime',
+  'Documentary',
+  'Drama',
+  'Family',
+  'Fantasy',
+  'History',
+  'Horror',
+  'Music',
+  'Mystery',
+  'Romance',
+  'Science',
+  'Fiction',
+  'TV Movie',
+  'Thriller',
+  'War',
+  'Western',
+];
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'M/D/YYYY';
@@ -25,6 +49,10 @@ export default function Movie() {
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>(['Books']);
+  const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
+    {}
+  );
 
   useEffect(() => {
     async function fetchMediaData() {
@@ -47,6 +75,7 @@ export default function Movie() {
           false,
           releaseDateRange
         );
+        console.log(movieData);
         const filteredMovieData: Movie[] = movieData.results.map(
           (movie: any) => ({
             title: movie.title,
@@ -70,6 +99,13 @@ export default function Movie() {
 
   const handleChange = (value: string) => {
     setSortBy(value);
+  };
+
+  const handleTagChange = (tag: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tag]
+      : selectedTags.filter((t) => t !== tag);
+    setSelectedTags(nextSelectedTags);
   };
 
   const handleSort = (sortBy: string) => {
@@ -120,7 +156,7 @@ export default function Movie() {
     <>
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
         <div className="flex justify-start items-start gap-8 px-10">
-          <div className="sidebar shadow min-h-screen rounded mt-8 p-4 min-w-[250px]">
+          <div className="sidebar shadow  rounded mt-8 p-4 min-w-[250px] max-w-[260px]">
             <h2 className="font-bold text-xl mb-4">Popular Movies</h2>
             <Select
               defaultValue="popularity.desc"
@@ -171,7 +207,7 @@ export default function Movie() {
               ]}
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col mb-2">
               <p className="text-lg text-gray-600 mb-2">Release Dates</p>
               <span className="flex justify-between items-center text-gray-400 mb-4">
                 from
@@ -194,7 +230,23 @@ export default function Movie() {
                 />
               </span>
             </div>
+            <div>
+              <p className="text-lg text-gray-600 mt-4 mb-2">Genres</p>
+              <Space size={[0, 12]} wrap>
+                {tagsData.map((tag) => (
+                  <CheckableTag
+                    key={tag}
+                    checked={selectedTags.includes(tag)}
+                    onChange={(checked) => handleTagChange(tag, checked)}
+                    className="border-[1px] px-3 py-1 rounded-full font-bold border-slate-400  active:bg-mainColor focus:bg-mainColor focus:text-white checked:bg-mainColor enabled:bg-mainColor visited:bg-mainColor hover:text-white hover:bg-mainColor"
+                  >
+                    {tag}
+                  </CheckableTag>
+                ))}
+              </Space>
+            </div>
           </div>
+
           <div className="card mt-8">
             <Card media={media} customStyles={true} />
             <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
