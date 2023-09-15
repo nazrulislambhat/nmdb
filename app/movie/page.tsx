@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select, DatePicker } from 'antd';
+import { Select, DatePicker, Space, Tag } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -17,6 +17,30 @@ interface Movie {
   isMovie: boolean;
 }
 
+const { CheckableTag } = Tag;
+
+const tagsData = [
+  28, // Action
+  12, // Adventure
+  16, // Animation
+  35, // Comedy
+  80, // Crime
+  99, // Documentary
+  18, // Drama
+  10751, // Family
+  14, // Fantasy
+  36, // History
+  27, // Horror
+  10402, // Music
+  9648, // Mystery
+  10749, // Romance
+  878, // Science Fiction
+  10770, // TV Movie
+  53, // Thriller
+  10752, // War
+  37, // Western
+];
+
 dayjs.extend(customParseFormat);
 const dateFormat = 'M/D/YYYY';
 
@@ -25,6 +49,41 @@ export default function Movie() {
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
+
+  const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
+    {}
+  );
+
+  useEffect(() => {
+    async function fetchGenreData() {
+      try {
+        const genreResponse = await fetchData('genre/movie/list');
+        const genreData = genreResponse.genres.reduce(
+          (
+            acc: { [key: number]: string },
+            genre: { id: number; name: string }
+          ) => {
+            acc[genre.id] = genre.name;
+            return acc;
+          },
+          {}
+        );
+        setGenreMapping(genreData);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchGenreData();
+  }, []);
+
+  const handleTagChange = (tagId: number, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tagId]
+      : selectedTags.filter((id) => id !== tagId);
+    setSelectedTags(nextSelectedTags);
+  };
 
   useEffect(() => {
     async function fetchMediaData() {
@@ -47,8 +106,13 @@ export default function Movie() {
           false,
           releaseDateRange
         );
-        const filteredMovieData: Movie[] = movieData.results.map(
-          (movie: any) => ({
+
+        const filteredMovieData: Movie[] = movieData.results
+          .filter((movie: any) => {
+            const movieGenreIds: number[] = movie.genre_ids;
+            return selectedTags.every((tagId) => movieGenreIds.includes(tagId));
+          })
+          .map((movie: any) => ({
             title: movie.title,
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
@@ -57,8 +121,8 @@ export default function Movie() {
             popularity: movie.popularity,
             id: movie.id,
             isMovie: true,
-          })
-        );
+          }));
+
         setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
@@ -66,7 +130,7 @@ export default function Movie() {
     }
 
     fetchMediaData();
-  }, [sortBy, fromDate, toDate]);
+  }, [selectedTags, sortBy, fromDate, toDate]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -120,7 +184,7 @@ export default function Movie() {
     <>
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
         <div className="flex justify-start items-start gap-8 px-10">
-          <div className="sidebar shadow min-h-screen rounded mt-8 p-4 min-w-[250px]">
+          <div className="sidebar shadow  rounded mt-8 p-4 min-w-[250px] max-w-[260px]">
             <h2 className="font-bold text-xl mb-4">Popular Movies</h2>
             <Select
               defaultValue="popularity.desc"
@@ -171,7 +235,7 @@ export default function Movie() {
               ]}
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col mb-2">
               <p className="text-lg text-gray-600 mb-2">Release Dates</p>
               <span className="flex justify-between items-center text-gray-400 mb-4">
                 from
@@ -194,7 +258,23 @@ export default function Movie() {
                 />
               </span>
             </div>
+            <div>
+              <p className="text-lg text-gray-600 mt-4 mb-2">Genres</p>
+              <Space size={[0, 12]} wrap>
+                {tagsData.map((tagId, index) => (
+                  <CheckableTag
+                    key={index}
+                    checked={selectedTags.includes(tagId)}
+                    onChange={(checked) => handleTagChange(tagId, checked)}
+                    className="border-[1px] px-3 py-1 rounded-full font-bold border-slate-400 active:bg-mainColor focus:bg-mainColor focus:text-white checked:bg-mainColor enabled:bg-mainColor visited:bg-mainColor hover:text-white hover:bg-mainColor"
+                  >
+                    {genreMapping[tagId]}
+                  </CheckableTag>
+                ))}
+              </Space>
+            </div>
           </div>
+
           <div className="card mt-8">
             <Card media={media} customStyles={true} />
             <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
