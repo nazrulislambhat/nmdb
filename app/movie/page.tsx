@@ -16,29 +16,29 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+
 const { CheckableTag } = Tag;
 
 const tagsData = [
-  'Action',
-  'Adventure',
-  'Animation',
-  'Comedy',
-  'Crime',
-  'Documentary',
-  'Drama',
-  'Family',
-  'Fantasy',
-  'History',
-  'Horror',
-  'Music',
-  'Mystery',
-  'Romance',
-  'Science',
-  'Fiction',
-  'TV Movie',
-  'Thriller',
-  'War',
-  'Western',
+  28, // Action
+  12, // Adventure
+  16, // Animation
+  35, // Comedy
+  80, // Crime
+  99, // Documentary
+  18, // Drama
+  10751, // Family
+  14, // Fantasy
+  36, // History
+  27, // Horror
+  10402, // Music
+  9648, // Mystery
+  10749, // Romance
+  878, // Science Fiction
+  10770, // TV Movie
+  53, // Thriller
+  10752, // War
+  37, // Western
 ];
 
 dayjs.extend(customParseFormat);
@@ -49,10 +49,41 @@ export default function Movie() {
   const [sortBy, setSortBy] = useState<string>('popularity.desc');
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
-  const [selectedTags, setSelectedTags] = useState<string[]>(['Books']);
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
+
   const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
     {}
   );
+
+  useEffect(() => {
+    async function fetchGenreData() {
+      try {
+        const genreResponse = await fetchData('genre/movie/list');
+        const genreData = genreResponse.genres.reduce(
+          (
+            acc: { [key: number]: string },
+            genre: { id: number; name: string }
+          ) => {
+            acc[genre.id] = genre.name;
+            return acc;
+          },
+          {}
+        );
+        setGenreMapping(genreData);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchGenreData();
+  }, []);
+
+  const handleTagChange = (tagId: number, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tagId]
+      : selectedTags.filter((id) => id !== tagId);
+    setSelectedTags(nextSelectedTags);
+  };
 
   useEffect(() => {
     async function fetchMediaData() {
@@ -75,9 +106,13 @@ export default function Movie() {
           false,
           releaseDateRange
         );
-        console.log(movieData);
-        const filteredMovieData: Movie[] = movieData.results.map(
-          (movie: any) => ({
+
+        const filteredMovieData: Movie[] = movieData.results
+          .filter((movie: any) => {
+            const movieGenreIds: number[] = movie.genre_ids;
+            return selectedTags.every((tagId) => movieGenreIds.includes(tagId));
+          })
+          .map((movie: any) => ({
             title: movie.title,
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
@@ -86,8 +121,8 @@ export default function Movie() {
             popularity: movie.popularity,
             id: movie.id,
             isMovie: true,
-          })
-        );
+          }));
+
         setMedia(filteredMovieData);
       } catch (error) {
         console.error(error);
@@ -95,17 +130,10 @@ export default function Movie() {
     }
 
     fetchMediaData();
-  }, [sortBy, fromDate, toDate]);
+  }, [selectedTags, sortBy, fromDate, toDate]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
-  };
-
-  const handleTagChange = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked
-      ? [...selectedTags, tag]
-      : selectedTags.filter((t) => t !== tag);
-    setSelectedTags(nextSelectedTags);
   };
 
   const handleSort = (sortBy: string) => {
@@ -233,14 +261,14 @@ export default function Movie() {
             <div>
               <p className="text-lg text-gray-600 mt-4 mb-2">Genres</p>
               <Space size={[0, 12]} wrap>
-                {tagsData.map((tag) => (
+                {tagsData.map((tagId, index) => (
                   <CheckableTag
-                    key={tag}
-                    checked={selectedTags.includes(tag)}
-                    onChange={(checked) => handleTagChange(tag, checked)}
-                    className="border-[1px] px-3 py-1 rounded-full font-bold border-slate-400  active:bg-mainColor focus:bg-mainColor focus:text-white checked:bg-mainColor enabled:bg-mainColor visited:bg-mainColor hover:text-white hover:bg-mainColor"
+                    key={index}
+                    checked={selectedTags.includes(tagId)}
+                    onChange={(checked) => handleTagChange(tagId, checked)}
+                    className="border-[1px] px-3 py-1 rounded-full font-bold border-slate-400 active:bg-mainColor focus:bg-mainColor focus:text-white checked:bg-mainColor enabled:bg-mainColor visited:bg-mainColor hover:text-white hover:bg-mainColor"
                   >
-                    {tag}
+                    {genreMapping[tagId]}
                   </CheckableTag>
                 ))}
               </Space>
