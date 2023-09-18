@@ -162,7 +162,6 @@ export default function Movie() {
           })
           .filter((movie: any) => {
             if (!selectedLanguage) {
-              // No language filter, include all movies
               return true;
             }
             return movie.original_language === selectedLanguage;
