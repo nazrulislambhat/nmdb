@@ -374,15 +374,15 @@ export default function Movie() {
             {languageHasMovies ? (
               <Card media={media} customStyles={true} />
             ) : (
-              <p className="font-semibold ">
+              <p className="text-3xl flex items-center">
                 No Movies for{' '}
-                <span className="text-base bg-mainColor px-2 py-[1px] text-white font-bold rounded-md">
+                <span className="text-base bg-[#CCFCCB] px-2 py-[3px] mx-1 text-backgroundColor font-bold rounded-md">
                   {selectedLanguageName}
                 </span>{' '}
                 language
               </p>
             )}
-            <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
+            <button className="w-[100%] bg-mainColor text-base rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
               Load More
             </button>
           </div>
