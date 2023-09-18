@@ -106,7 +106,7 @@ export default function Movie() {
           false,
           releaseDateRange
         );
-
+        console.log(movieData);
         const filteredMovieData: Movie[] = movieData.results
           .filter((movie: any) => {
             const movieGenreIds: number[] = movie.genre_ids;
@@ -179,7 +179,18 @@ export default function Movie() {
 
     setMedia(sortedMedia);
   };
+  const languageFilterOption = (
+    input: string,
+    option: { label: string; value: string }
+  ) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
+  const onLanguageChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onLanguageSearch = (value: string) => {
+    console.log('search:', value);
+  };
   return (
     <>
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
@@ -272,6 +283,48 @@ export default function Movie() {
                   </CheckableTag>
                 ))}
               </Space>
+            </div>
+            <div>
+              <p className="text-lg text-gray-600 mt-4 mb-2 flex max-h-[20px] items-center">
+                Language
+                <span className=" bg-gray-400 text-xs text-white font-bold w-2 p-2 rounded-full h-2 flex justify-center items-center ml-1">
+                  ?
+                </span>
+              </p>
+              <Select
+                showSearch
+                optionFilterProp="children"
+                className="min-w-[8vw]"
+                onChange={onLanguageChange}
+                onSearch={onLanguageSearch}
+                filterOption={languageFilterOption}
+                options={[
+                  {
+                    value: 'none',
+                    label: 'None selected ',
+                  },
+                  {
+                    value: 'en',
+                    label: 'English',
+                  },
+                  {
+                    value: 'fr',
+                    label: 'French',
+                  },
+                  {
+                    value: 'de',
+                    label: 'German',
+                  },
+                  {
+                    value: 'es',
+                    label: 'Spanish',
+                  },
+                  {
+                    value: 'it',
+                    label: 'Italian',
+                  },
+                ]}
+              />
             </div>
           </div>
 
