@@ -50,6 +50,7 @@ export default function Movie() {
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
   const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
     {}
@@ -106,11 +107,18 @@ export default function Movie() {
           false,
           releaseDateRange
         );
-        console.log(movieData);
+
         const filteredMovieData: Movie[] = movieData.results
           .filter((movie: any) => {
             const movieGenreIds: number[] = movie.genre_ids;
             return selectedTags.every((tagId) => movieGenreIds.includes(tagId));
+          })
+          .filter((movie: any) => {
+            if (!selectedLanguage) {
+              // No language filter, include all movies
+              return true;
+            }
+            return movie.original_language === selectedLanguage;
           })
           .map((movie: any) => ({
             title: movie.title,
@@ -130,7 +138,7 @@ export default function Movie() {
     }
 
     fetchMediaData();
-  }, [selectedTags, sortBy, fromDate, toDate]);
+  }, [selectedTags, sortBy, fromDate, toDate, selectedLanguage]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -185,7 +193,7 @@ export default function Movie() {
   ) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
   const onLanguageChange = (value: string) => {
-    console.log(`selected ${value}`);
+    setSelectedLanguage(value === 'none' ? null : value);
   };
 
   const onLanguageSearch = (value: string) => {
