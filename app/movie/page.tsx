@@ -297,11 +297,12 @@ export default function Movie() {
                 className="min-w-[8vw]"
                 onChange={onLanguageChange}
                 onSearch={onLanguageSearch}
+                defaultValue="none" // Set the default value to 'none'
                 filterOption={languageFilterOption}
                 options={[
                   {
                     value: 'none',
-                    label: 'None selected ',
+                    label: 'None Selected ',
                   },
                   {
                     value: 'en',
