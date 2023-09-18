@@ -16,6 +16,49 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+interface LanguageOption {
+  value: string;
+  label: string;
+}
+interface LanguageFilterOptionProps {
+  input: string;
+  option: { label: string; value: string };
+}
+
+const languageOptions: LanguageOption[] = [
+  {
+    value: 'none',
+    label: 'None selected',
+  },
+  {
+    value: 'en',
+    label: 'English',
+  },
+  {
+    value: 'fr',
+    label: 'French',
+  },
+  {
+    value: 'de',
+    label: 'German',
+  },
+  {
+    value: 'es',
+    label: 'Spanish',
+  },
+  {
+    value: 'it',
+    label: 'Italian',
+  },
+  {
+    value: 'hi',
+    label: 'Hindi',
+  },
+  {
+    value: 'cn',
+    label: 'Cantonese',
+  },
+];
 
 const { CheckableTag } = Tag;
 
@@ -51,6 +94,10 @@ export default function Movie() {
   const [toDate, setToDate] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [languageHasMovies, setLanguageHasMovies] = useState<boolean>(true);
+  const [selectedLanguageName, setSelectedLanguageName] = useState<
+    string | null
+  >(null);
 
   const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
     {}
@@ -115,6 +162,7 @@ export default function Movie() {
           })
           .filter((movie: any) => {
             if (!selectedLanguage) {
+              // No language filter, include all movies
               return true;
             }
             return movie.original_language === selectedLanguage;
@@ -131,6 +179,11 @@ export default function Movie() {
           }));
 
         setMedia(filteredMovieData);
+        if (selectedLanguage && filteredMovieData.length === 0) {
+          setLanguageHasMovies(false);
+        } else {
+          setLanguageHasMovies(true);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -186,13 +239,19 @@ export default function Movie() {
 
     setMedia(sortedMedia);
   };
+
   const languageFilterOption = (
     input: string,
-    option: { label: string; value: string }
-  ) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    option: LanguageFilterOptionProps['option']
+  ) => option?.label.toLowerCase().includes(input.toLowerCase());
 
   const onLanguageChange = (value: string) => {
+    const selectedOption = languageOptions.find(
+      (option) => option.value === value
+    );
     setSelectedLanguage(value === 'none' ? null : value);
+    setSelectedLanguageName(selectedOption ? selectedOption.label : null);
+    setLanguageHasMovies(true);
   };
 
   const onLanguageSearch = (value: string) => {
@@ -304,48 +363,25 @@ export default function Movie() {
                 className="min-w-[8vw]"
                 onChange={onLanguageChange}
                 onSearch={onLanguageSearch}
-                filterOption={languageFilterOption}
+                filterOption={languageFilterOption as any}
                 defaultValue="none"
-                options={[
-                  {
-                    value: 'none',
-                    label: 'None selected',
-                  },
-                  {
-                    value: 'en',
-                    label: 'English',
-                  },
-                  {
-                    value: 'fr',
-                    label: 'French',
-                  },
-                  {
-                    value: 'de',
-                    label: 'German',
-                  },
-                  {
-                    value: 'es',
-                    label: 'Spanish',
-                  },
-                  {
-                    value: 'it',
-                    label: 'Italian',
-                  },
-                  {
-                    value: 'hi',
-                    label: 'Hindi',
-                  },
-                  {
-                    value: 'cn',
-                    label: 'Cantonese',
-                  },
-                ]}
+                options={languageOptions}
               />
             </div>
           </div>
 
           <div className="card mt-8">
-            <Card media={media} customStyles={true} />
+            {languageHasMovies ? (
+              <Card media={media} customStyles={true} />
+            ) : (
+              <p className="font-semibold ">
+                No Movies for{' '}
+                <span className="text-base bg-mainColor px-2 py-[1px] text-white font-bold rounded-md">
+                  {selectedLanguageName}
+                </span>{' '}
+                language
+              </p>
+            )}
             <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
               Load More
             </button>
