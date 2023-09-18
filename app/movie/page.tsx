@@ -323,6 +323,14 @@ export default function Movie() {
                     value: 'it',
                     label: 'Italian',
                   },
+                  {
+                    value: 'hi',
+                    label: 'Hindi',
+                  },
+                  {
+                    value: 'cn',
+                    label: 'Cantonese',
+                  },
                 ]}
               />
             </div>
