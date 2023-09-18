@@ -376,13 +376,13 @@ export default function Movie() {
             ) : (
               <p className="text-3xl flex items-center">
                 No Movies for{' '}
-                <span className="text-base bg-[#CCFCCB] px-2 py-[3px] mx-1 text-backgroundColor font-bold rounded-md">
+                <span className="text-base bg-gradient-to-r from-cyan-500  to-blue-500 px-2 py-[3px] mx-1 text-white font-bold rounded-md">
                   {selectedLanguageName}
                 </span>{' '}
                 language
               </p>
             )}
-            <button className="w-[100%] bg-mainColor text-base rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
+            <button className="w-[100%] bg-gradient-to-r from-cyan-500  to-blue-500 text-base rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
               Load More
             </button>
           </div>
@@ -390,7 +390,7 @@ export default function Movie() {
       </div>
       <button
         onClick={() => handleSort(sortBy)}
-        className="w-[100vw] bg-mainColor py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-sky-950"
+        className="w-[100vw] bg-gradient-to-r from-cyan-500  to-blue-500 py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-emerald-700"
       >
         Search
       </button>
