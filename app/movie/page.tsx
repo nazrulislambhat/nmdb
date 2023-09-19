@@ -16,6 +16,49 @@ interface Movie {
   popularity: number;
   isMovie: boolean;
 }
+interface LanguageOption {
+  value: string;
+  label: string;
+}
+interface LanguageFilterOptionProps {
+  input: string;
+  option: { label: string; value: string };
+}
+
+const languageOptions: LanguageOption[] = [
+  {
+    value: 'none',
+    label: 'None selected',
+  },
+  {
+    value: 'en',
+    label: 'English',
+  },
+  {
+    value: 'fr',
+    label: 'French',
+  },
+  {
+    value: 'de',
+    label: 'German',
+  },
+  {
+    value: 'es',
+    label: 'Spanish',
+  },
+  {
+    value: 'it',
+    label: 'Italian',
+  },
+  {
+    value: 'hi',
+    label: 'Hindi',
+  },
+  {
+    value: 'cn',
+    label: 'Cantonese',
+  },
+];
 
 const { CheckableTag } = Tag;
 
@@ -50,6 +93,11 @@ export default function Movie() {
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [languageHasMovies, setLanguageHasMovies] = useState<boolean>(true);
+  const [selectedLanguageName, setSelectedLanguageName] = useState<
+    string | null
+  >(null);
 
   const [genreMapping, setGenreMapping] = useState<{ [key: number]: string }>(
     {}
@@ -112,6 +160,12 @@ export default function Movie() {
             const movieGenreIds: number[] = movie.genre_ids;
             return selectedTags.every((tagId) => movieGenreIds.includes(tagId));
           })
+          .filter((movie: any) => {
+            if (!selectedLanguage) {
+              return true;
+            }
+            return movie.original_language === selectedLanguage;
+          })
           .map((movie: any) => ({
             title: movie.title,
             releaseDate: movie.release_date,
@@ -124,13 +178,18 @@ export default function Movie() {
           }));
 
         setMedia(filteredMovieData);
+        if (selectedLanguage && filteredMovieData.length === 0) {
+          setLanguageHasMovies(false);
+        } else {
+          setLanguageHasMovies(true);
+        }
       } catch (error) {
         console.error(error);
       }
     }
 
     fetchMediaData();
-  }, [selectedTags, sortBy, fromDate, toDate]);
+  }, [selectedTags, sortBy, fromDate, toDate, selectedLanguage]);
 
   const handleChange = (value: string) => {
     setSortBy(value);
@@ -180,6 +239,23 @@ export default function Movie() {
     setMedia(sortedMedia);
   };
 
+  const languageFilterOption = (
+    input: string,
+    option: LanguageFilterOptionProps['option']
+  ) => option?.label.toLowerCase().includes(input.toLowerCase());
+
+  const onLanguageChange = (value: string) => {
+    const selectedOption = languageOptions.find(
+      (option) => option.value === value
+    );
+    setSelectedLanguage(value === 'none' ? null : value);
+    setSelectedLanguageName(selectedOption ? selectedOption.label : null);
+    setLanguageHasMovies(true);
+  };
+
+  const onLanguageSearch = (value: string) => {
+    console.log('search:', value);
+  };
   return (
     <>
       <div className="overflow-hidden mx-auto max-w-[1440px] min-h-screen mt-[50px]">
@@ -273,11 +349,39 @@ export default function Movie() {
                 ))}
               </Space>
             </div>
+            <div>
+              <p className="text-lg text-gray-600 mt-4 mb-2 flex max-h-[20px] items-center">
+                Language
+                <span className=" bg-gray-400 text-xs text-white font-bold w-2 p-2 rounded-full h-2 flex justify-center items-center ml-1">
+                  ?
+                </span>
+              </p>
+              <Select
+                showSearch
+                optionFilterProp="children"
+                className="min-w-[8vw]"
+                onChange={onLanguageChange}
+                onSearch={onLanguageSearch}
+                filterOption={languageFilterOption as any}
+                defaultValue="none"
+                options={languageOptions}
+              />
+            </div>
           </div>
 
           <div className="card mt-8">
-            <Card media={media} customStyles={true} />
-            <button className="w-[100%] bg-mainColor text-2xl rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
+            {languageHasMovies ? (
+              <Card media={media} customStyles={true} />
+            ) : (
+              <p className="text-3xl flex items-center">
+                No Movies for{' '}
+                <span className="text-base bg-gradient-to-r from-cyan-500  to-blue-500 px-2 py-[3px] mx-1 text-white font-bold rounded-md">
+                  {selectedLanguageName}
+                </span>{' '}
+                language
+              </p>
+            )}
+            <button className="w-[100%] bg-gradient-to-r from-cyan-500  to-blue-500 text-base rounded-md border px-8 py-2 text-white font-bold my-4 hover:text-black">
               Load More
             </button>
           </div>
@@ -285,7 +389,7 @@ export default function Movie() {
       </div>
       <button
         onClick={() => handleSort(sortBy)}
-        className="w-[100vw] bg-mainColor py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-sky-950"
+        className="w-[100vw] bg-gradient-to-r from-cyan-500  to-blue-500 py-3 text-center mt-8 text-white font-base text-xl fixed bottom-0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-emerald-700"
       >
         Search
       </button>
