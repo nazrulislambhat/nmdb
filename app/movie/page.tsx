@@ -2,10 +2,23 @@
 import { useState, useEffect } from 'react';
 import { fetchData } from '../utils/api';
 import Card from '../components/MovieCard/MovieCard';
-import { Select, DatePicker, Space, Tag } from 'antd';
+import { Select, Slider, DatePicker, Space, Tag } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import type { SliderMarks } from 'antd/es/slider';
 
+const marks: SliderMarks = {
+  1: '1',
+  2: '2',
+  3: '3',
+  4: '4',
+  5: '5',
+  6: '6',
+  7: '7',
+  8: '8',
+  9: '9',
+  10: '10',
+};
 interface Movie {
   title: string;
   releaseDate: string;
@@ -365,6 +378,18 @@ export default function Movie() {
                 filterOption={languageFilterOption as any}
                 defaultValue="none"
                 options={languageOptions}
+              />
+            </div>
+            <div>
+              <p className="text-base text-gray-600 mt-4 mb-2 flex max-h-[20px] items-center">
+                User Score
+              </p>
+              <Slider
+                range={{ draggableTrack: true }}
+                marks={marks}
+                defaultValue={[0, 100]}
+                max={10}
+                min={1}
               />
             </div>
           </div>
